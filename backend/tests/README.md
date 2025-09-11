@@ -1,0 +1,1 @@
+The tests directory contains Unit and integration tests for backend code.

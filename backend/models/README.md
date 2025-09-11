@@ -1,0 +1,1 @@
+The models directory contains database schemas/models.

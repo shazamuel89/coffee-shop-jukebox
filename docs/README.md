@@ -1,0 +1,1 @@
+The docs directory contains documentation for the project. This can include API design/specs (what endpoints exist and how to use them), diagrams (system architecture, data flow), meeting notes, user stories, etc.

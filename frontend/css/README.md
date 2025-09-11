@@ -1,0 +1,1 @@
+The css directory contains css stylesheets.

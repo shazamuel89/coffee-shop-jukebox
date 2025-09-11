@@ -1,0 +1,1 @@
+The pages directory contains HTML pages that make up the site.

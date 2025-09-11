@@ -1,0 +1,1 @@
+The middleware directory contains code that runs between request and response in Express.

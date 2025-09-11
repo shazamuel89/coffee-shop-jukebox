@@ -1,0 +1,1 @@
+The backend directory contains all API and server-side logic for the Coffee Shop Jukebox app. This handles requests from the frontend, Spotify integration, song queue managment, voting, admin restrictions, etc. This directory is deployed as a Web Service on render.

@@ -1,0 +1,1 @@
+The routes directory contains API route definitions, mapping endpoints to controllers.

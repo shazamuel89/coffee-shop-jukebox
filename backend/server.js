@@ -1,0 +1,1 @@
+// Main entry point for the backend. Starts the server, loads middleware, registers routes, and connects to the database.

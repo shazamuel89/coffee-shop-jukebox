@@ -1,0 +1,1 @@
+The api directory contains API routes.

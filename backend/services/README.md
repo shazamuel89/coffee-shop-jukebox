@@ -1,0 +1,1 @@
+The services directory contains business logic and external integrations such as Spotify API requests. It helps keep the controllers thin.

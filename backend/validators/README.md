@@ -1,0 +1,1 @@
+The validators directory contains request validation logic, keeping validation rules out of controllers.

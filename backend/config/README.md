@@ -1,0 +1,1 @@
+The config directory contains configuration files such as database connection, Spotify API keys, environment settings, etc.

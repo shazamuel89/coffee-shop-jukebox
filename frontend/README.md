@@ -1,0 +1,1 @@
+The frontend directory contains all of the static files that make up the user interface of the Coffee Shop Jukebox app (both customer and admin views). This directory is deployed as a Static Site on Render.
