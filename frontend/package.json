@@ -1,0 +1,22 @@
+{
+  "name": "coffee-shop-jukebox-frontend",
+  "version": "1.0.0",
+  "description": "The frontend directory contains all of the static files that make up the user interface of the Coffee Shop Jukebox app (both customer and admin views). This directory is deployed as a Static Site on Render.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shazamuel89/coffee-shop-jukebox.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shazamuel89/coffee-shop-jukebox/issues"
+  },
+  "homepage": "https://github.com/shazamuel89/coffee-shop-jukebox#readme",
+  "dependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}
