@@ -1,0 +1,13 @@
+body {
+    background-color: #1db954;
+    text-align: center;
+}
+
+button {
+    background-color: black;
+    color: white;
+}
+
+.title {
+    text-align: center;
+}
