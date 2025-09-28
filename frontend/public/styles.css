@@ -1,0 +1,19 @@
+:root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+body { background:#0f0f0f; color:#eee; }
+
+.container { max-width: 680px; margin: 0 auto; padding: 16px; }
+.searchbar { position: sticky; top: 0; background: #0f0f0f; padding: 12px; display: grid; gap: 8px; border-bottom: 1px solid #222; }
+label { color: #ddd; }
+input[type="search"] { padding: 10px; border-radius: 10px; border: 1px solid #333; width: 100%; background:#151515; color:#eee; }
+
+.results { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+.card { display: grid; grid-template-columns: 64px 1fr auto; gap: 10px; align-items: center; padding: 10px; border: 1px solid #222; border-radius: 12px; background:#121212; }
+.card img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; }
+
+button { padding: 8px 12px; border-radius: 999px; border: 0; cursor: pointer; background:#2e7d32; color:white; }
+button:disabled { background:#3a3a3a; cursor: default; }
+
+.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); padding: 10px 16px; background: #1b1b1b; border: 1px solid #444; border-radius: 10px; color: #eee; box-shadow: 0 6px 24px rgba(0,0,0,.4); }
+.loading { font-size: 0.9rem; opacity: 0.85; color: #bbb; }
+
+@media (min-width: 420px) { .results { grid-template-columns: 1fr; } }

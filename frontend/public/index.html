@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coffee Shop Jukebox — Local</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
+    .ok { color: green; }
+    .err { color: crimson; }
+    .btn { padding: .5rem 1rem; border: 1px solid #ccc; border-radius: .5rem; background:#f5f5f5; cursor:pointer; }
+    .btn:hover { background:#eee; }
+    pre { background:#f6f8fa; padding:1rem; border-radius:.5rem; overflow:auto; }
+  </style>
+</head>
+<body>
+<!--
+  <h1>☕ Coffee Shop Jukebox (Local Frontend)</h1>
+  <p>This page lets you verify your local frontend can talk to the deployed backend.</p>
+
+  <p><strong>API Base:</strong> <code id="apiBase"></code></p>
+
+  <button class="btn" id="btnHealth">Check Backend Health</button>
+  <div id="health" style="margin-top:1rem;"></div>
+
+  <script>
+    // Since this is a static site (no build tool), we hardcode the API base for now.
+    const API_BASE = "https://coffee-shop-jukebox.onrender.com";
+    document.getElementById('apiBase').textContent = API_BASE;
+
+    document.getElementById('btnHealth').addEventListener('click', async () => {
+      const out = document.getElementById('health');
+      out.textContent = 'Checking...';
+      try {
+        const res = await fetch(API_BASE + '/health', { headers: { 'Accept': 'application/json' } });
+        const text = await res.text(); // use text() to show something even if not JSON
+        if (res.ok) {
+          out.innerHTML = '<div class="ok">✅ OK</div><pre>' + text + '</pre>';
+        } else {
+          out.innerHTML = '<div class="err">❌ HTTP ' + res.status + '</div><pre>' + text + '</pre>';
+        }
+      } catch (e) {
+        out.innerHTML = '<div class="err">❌ Failed: ' + e.message + '</div>';
+      }
+    });
+  </script>
+-->
+  <!-- New search UI -->
+  <div class="container">
+    <div class="searchbar">
+      <label for="q">Search songs (title, artist, album)</label>
+      <input id="q" type="search" placeholder="Start typing…" autocomplete="off" />
+      <div id="status" class="loading" aria-live="polite"></div>
+    </div>
+    <div id="results" class="results" role="list"></div>
+  </div>
+
+  <div id="toast" class="toast" style="display:none;" aria-live="assertive"></div>
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js"></script>
+</body>
+</html>
