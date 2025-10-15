@@ -1,13 +1,20 @@
-// Main entry point for the backend. Starts the server, loads middleware, registers routes, and connects to the database.
+// backend/server.js
+import express from "express";
+import cors from "cors";
 
+import healthRouter from "./routes/health.js";
+import dbCheckRouter from "./routes/dbcheck.js"; 
 
-// Initialize express app
-const express = require('express');
 const app = express();
+app.use(cors());
+app.use(express.json());
 
-// Set a single route to get 'Hello world!'
-app.get('/', (req, res) => res.send('Hello world!'));
+// simple home
+app.get("/", (_req, res) => res.send("Hello world!"));
 
-// Either use render's .env port variable, or use 3000
-const PORT = process.env.port || 3000;
+// routes
+app.use("/api/health", healthRouter);
+app.use("/api/dbcheck", dbCheckRouter); 
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
