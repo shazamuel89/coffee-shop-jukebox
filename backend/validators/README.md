@@ -1,1 +1,1 @@
-The validators directory contains request validation logic, keeping validation rules out of controllers.
+The validators directory contains request validation logic, keeping validation rules out of controllers. Could potentially be removed due to these functions being implemented in the services.
