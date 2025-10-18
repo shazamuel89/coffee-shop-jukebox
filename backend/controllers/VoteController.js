@@ -25,12 +25,11 @@ const submitVote = async (req, res) => {
             return res.status(400).json({ error: typeError });
         }
 
-
         // All parameters present and types confirmed, so extract them
         const { queueItemId, userId, isUpvote } = req.body;
 
         // Pass to the service layer
-        const result = await VoteService.submitVote({ queueItemId, userId, isUpvote });
+        const result = await VoteService.applyVote({ queueItemId, userId, isUpvote });
 
         // Send confirmation response with result
         res.status(200).json(result);
