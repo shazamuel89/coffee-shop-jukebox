@@ -14,10 +14,10 @@ CREATE TABLE Queue (
 CREATE TABLE Votes (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES Users(id),
-    queue_id INT NOT NULL REFERENCES Queue(id),
+    queue_item_id INT NOT NULL REFERENCES Queue(id),
     is_upvote BOOLEAN NOT NULL DEFAULT TRUE,
     timestamp TIMESTAMP DEFAULT NOW(),
-    UNIQUE (user_id, queue_id)
+    UNIQUE (user_id, queue_item_id)
 );
 
 CREATE TABLE Tracks (
