@@ -6,6 +6,7 @@ import cors from "cors";
 import healthRouter from "./routes/health.js";
 import dbCheckRouter from "./routes/dbcheck.js";
 import searchRouter from "./controllers/SearchController.js";
+import queueRouter from "./controllers/QueueController.js";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get("/", (_req, res) => res.send("Hello world!"));
 app.use("/api/health", healthRouter);
 app.use("/api/dbcheck", dbCheckRouter);
 app.use("/api/search", searchRouter);
+app.use("/api/queue", queueRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
