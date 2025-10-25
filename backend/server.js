@@ -7,6 +7,7 @@ import healthRouter from "./routes/health.js";
 import dbCheckRouter from "./routes/dbcheck.js";
 import searchRouter from "./controllers/SearchController.js";
 import queueRouter from "./controllers/QueueController.js";
+import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -20,6 +21,9 @@ app.use("/api/health", healthRouter);
 app.use("/api/dbcheck", dbCheckRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/queue", queueRouter);
+
+app.use(notFound);          
+app.use(errorHandler);       
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
