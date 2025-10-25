@@ -46,6 +46,26 @@ router.delete("/:id", (req, res) => {
   return res.json({ ok: true, removed });
 });
 
+// PATCH /api/queue/:id/vote  { dir: "up" | "down" }
+router.patch("/:id/vote", (req, res) => {
+  const { id } = req.params;
+  const dir = (req.body?.dir || "").toLowerCase();
+  if (!["up", "down"].includes(dir)) {
+    return res.status(400).json({ error: "dir must be 'up' or 'down'" });
+  }
+
+  const items = loadQueue();
+  const item = items.find(i => i.id === id);
+  if (!item) return res.status(404).json({ error: "not found" });
+
+  if (dir === "up") item.up += 1;
+  else item.down += 1;
+
+  saveQueue(items);
+  res.json({ ok: true, item });
+});
+
+
 
 export default router;   // <-- IMPORTANT
 
