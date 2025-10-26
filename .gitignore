@@ -6,3 +6,4 @@ backend/.env
 **/.env*
 **/node_modules/
 
+notes.txt

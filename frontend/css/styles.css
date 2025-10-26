@@ -4,6 +4,8 @@
 body {
     background:#0f0f0f;
     color:#eee;
+    font-family: system-ui, Arial, sans-serif;
+    margin: 2rem;
 }
 
 .container {

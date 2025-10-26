@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Coffee Shop Jukebox — Health Check</title>
   <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .ok { color: green; }
+    .err { color: crimson; }
+    .btn { padding: .5rem 1rem; border: 1px solid #ccc; border-radius: .5rem; background:#e25353; cursor:pointer; }
+    .btn:hover { background:#e08686; }
+    pre { background:#4792dd; padding:1rem; border-radius:.5rem; overflow:auto; }
+  </style>
 </head>
 <body>
   <h1>☕ Coffee Shop Jukebox (Local Frontend)</h1>
@@ -15,26 +22,6 @@
   <button class="btn" id="btnHealth">Check Backend Health</button>
   <div id="health" style="margin-top:1rem;"></div>
 
-  <script>
-    // Since this is a static site (no build tool), we hardcode the API base for now.
-    const API_BASE = "https://coffee-shop-jukebox.onrender.com";
-    document.getElementById('apiBase').textContent = API_BASE;
-
-    document.getElementById('btnHealth').addEventListener('click', async () => {
-      const out = document.getElementById('health');
-      out.textContent = 'Checking...';
-      try {
-        const res = await fetch(API_BASE + '/health', { headers: { 'Accept': 'application/json' } });
-        const text = await res.text(); // use text() to show something even if not JSON
-        if (res.ok) {
-          out.innerHTML = '<div class="ok">✅ OK</div><pre>' + text + '</pre>';
-        } else {
-          out.innerHTML = '<div class="err">❌ HTTP ' + res.status + '</div><pre>' + text + '</pre>';
-        }
-      } catch (e) {
-        out.innerHTML = '<div class="err">❌ Failed: ' + e.message + '</div>';
-      }
-    });
-  </script>
+  <script src="../js/health.js"></script>
 </body>
 </html>
