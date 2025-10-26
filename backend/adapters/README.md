@@ -1,0 +1,1 @@
+The adapters directory contains external integrations such as Spotify API requests and playback handlers.
