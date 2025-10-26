@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">  
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coffee Shop Jukebox — Health Check</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .ok { color: green; }
+    .err { color: crimson; }
+    .btn { padding: .5rem 1rem; border: 1px solid #ccc; border-radius: .5rem; background:#e25353; cursor:pointer; }
+    .btn:hover { background:#e08686; }
+    pre { background:#4792dd; padding:1rem; border-radius:.5rem; overflow:auto; }
+  </style>
+</head>
+<body>
+  <h1>☕ Coffee Shop Jukebox (Local Frontend)</h1>
+  <p>This page lets you verify your local frontend can talk to the deployed backend.</p>
+
+  <p><strong>API Base:</strong> <code id="apiBase"></code></p>
+
+  <button class="btn" id="btnHealth">Check Backend Health</button>
+  <div id="health" style="margin-top:1rem;"></div>
+
+  <script src="../js/health.js"></script>
+</body>
+</html>
