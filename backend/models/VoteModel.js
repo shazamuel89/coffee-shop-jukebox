@@ -42,7 +42,7 @@ const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
     const query = `
         SELECT
             queue_item_id,
-            is_upvoted
+            is_upvote
         FROM
             ${table}
         WHERE

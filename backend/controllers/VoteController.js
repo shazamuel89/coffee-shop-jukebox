@@ -43,3 +43,5 @@ const submitVote = async (req, res) => {
         res.status(500).json({ error: "Server error submitting vote." });
     }
 };
+
+export { submitVote };
