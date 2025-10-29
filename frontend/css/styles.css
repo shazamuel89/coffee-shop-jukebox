@@ -88,6 +88,28 @@ button:disabled {
     color: #bbb;
 }
 
+
+.pressed {
+    opacity: 1;
+    font-weight: bold;
+    border-width: 2px;
+}
+.vote-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.vote-count {
+    font-size: 0.8rem;
+    color: #555;
+    line-height: 1;
+}
+h3 {
+    color: #000;
+}
+
+
 @media (min-width: 420px) {
     .results {
         grid-template-columns: 1fr;
