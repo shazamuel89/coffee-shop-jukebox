@@ -1,17 +1,23 @@
 // backend/controllers/SearchController.js
-import { Router } from "express";
+import { searchTracks } from "../services/SearchService.js";
 
-const router = Router();
+export const handleSearch = async (req, res) => {
+  try {
+    const q = (req.query.q || "").toString().trim();
 
-// GET /api/search?q=term  (simple mock so it always works)
-router.get("/", (req, res) => {
-  const q = (req.query.q || "").toString().trim();
-  if (!q) return res.status(400).json({ error: "Missing query param ?q=" });
-  res.json({
-    q,
-    results: [{ id: "mock1", title: "Blinding Lights", artist: "The Weeknd" }]
-  });
-});
+    if (!q) {
+      return res.status(400).json({ error: "Missing query param ?q=" });
+    }
 
-export default router;
+    const results = await searchTracks(q);
 
+    // Final formatting (if any) would happen here
+    res.json({
+      q,
+      results
+    });
+  } catch (err) {
+    console.error("Search error:", err);
+    return res.status(500).json({ error: "Search failed", details: err.message });
+  }
+}
