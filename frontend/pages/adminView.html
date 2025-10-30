@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>AdminView -v 1.0</title>
+	<link rel="stylesheet" href="../css/styles.css">
+    </head>
+    <body>
+	<div class="container">
+	    <!-- rules form — explicit, genre blacklist, length/request limits, etc. -->
+	    <div id="rules">
+		<h2>Administrator Rules</h2>
+		<form id="rulesForm" action="" method="post">
+		    <label for="explicitCheck">Explicit songs allowed:</label>
+		    <input type="checkbox" name="explicitCheck" id="explicitCheck">
+		    <br>
+		    <label for="lengthLimit">Song length limit:</label>
+		    <input type="text" name="lengthLimit" id="lengthLimit" maxlength="5" placeholder="12:34">
+		    <label for="lengthCheckToggle">No limit</label>
+		    <input type="checkbox" name="lengthCheckToggle" id="lengthCheckToggle">
+		    <br>
+		    <label for="requestLimit">Customer request limit:</label>
+		    <input type="number" name="requestLimit" id="requestLimit" min="1">
+		    <br>
+		    <details>
+			<summary>Allowed genres:</summary> 
+			<fieldset name="genreWhitelist" id="genreWhitelist">
+			    <ul id="genreList" class="collection">
+				<!-- generate genres dynamically and add checkboxes -->
+			    </ul>
+			</fieldset>
+		    </details>
+		    <input type="submit" class="btn">
+		</form>
+	    </div>
+	    <br><br><br>
+	    <!-- queue view, same as in queueView but with added playback controls -->
+	    <div id="queue">
+		<button onclick="test.printQueue()">click to refresh queue</button>
+	    </div>
+	    <br><br><br>
+	    <!-- link to reports page -->
+	    <div id="reportsLink">
+		<button class="btn" id="btnReports"><a href="reports.html">Reports</a></button>
+	    </div>
+	</div>
+
+	<script src="../js/timeHandler.js"></script>
+	<script src="../js/genreList.js"></script>
+	<script src="../../backend/utils/queueClass.js"></script>
+    </body>
+</html>
