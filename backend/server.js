@@ -6,7 +6,7 @@ import cors from 'cors';
 
 import corsOptions from './config/corsOptions.js';
 import { logger } from './middleware/logEvents.js';
-import errorHandler from './middleware/errorHandler.js';
+import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 
 // Import routers
@@ -67,10 +67,10 @@ app.use("/api/report", reportRouter);
 
 
 // Define a route for any not found routes
-app.use((req, res) => {
-    res.status(404).json({ error: "Not Found" });
-});
+app.use(notFound);
 
+// Define a route for error handling
 app.use(errorHandler);
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
