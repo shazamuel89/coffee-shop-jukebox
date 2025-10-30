@@ -1,6 +1,7 @@
 {
   "name": "coffee-shop-jukebox-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "This main README.md needs to contain a high-level overview of the project:",
   "main": "server.js",
   "directories": {

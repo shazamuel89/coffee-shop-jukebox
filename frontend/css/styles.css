@@ -106,7 +106,7 @@ button:disabled {
     line-height: 1;
 }
 h3 {
-    color: #000;
+    color: #eee; /* keeps contrast on dark theme */
 }
 
 
@@ -115,3 +115,109 @@ h3 {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- Mobile polish for ~5" screens --- */
+
+/* clamp long titles/artists so they don't overflow */
+.card strong,
+.card em {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* comfortable tap targets + readable inputs */
+button { min-height: 44px; }
+input[type="search"] { font-size: 16px; } /* prevents iOS zoom */
+
+/* slightly brighter vote count on dark bg for contrast */
+.vote-count { color: #aaa; }
+
+/* ---------- Queue view mobile polish ---------- */
+
+/* page wrapper */
+.queue-container { max-width: 680px; margin: 0 auto; padding: 16px; }
+
+/* section headers */
+.queue-header, .nowplaying-header { 
+  font-weight: 600; margin: 10px 0 6px; color: #eee;
+}
+
+/* the list of items */
+.queue-list { display: grid; gap: 10px; }
+
+/* queue item layout: cover | meta | actions (votes) */
+.queue-item { 
+  display: grid;
+  grid-template-columns: 64px 1fr 56px;
+  gap: 10px; align-items: center;
+  padding: 10px; border: 1px solid #222; border-radius: 12px; background:#121212;
+}
+.queue-item img { width:64px; height:64px; border-radius:8px; object-fit:cover; }
+
+/* clamp long text */
+.queue-item .title,
+.queue-item .byline {
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* actions column */
+.actions { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.vote-stack { display:flex; flex-direction:column; align-items:center; gap:4px; }
+
+/* buttons */
+.queue-item .btn,
+.controls .btn { padding:8px 12px; border-radius:999px; border:0; background:#2e7d32; color:#fff; }
+.queue-item .btn.secondary,
+.controls .btn.secondary { background:#1f1f1f; border:1px solid #333; }
+
+/* now playing block */
+.nowplaying { 
+  display:grid; grid-template-columns: 72px 1fr; gap:12px; 
+  padding:12px; border:1px solid #222; border-radius:12px; background:#151515; 
+  margin-bottom:12px;
+}
+.nowplaying img { width:72px; height:72px; border-radius:10px; object-fit:cover; }
+.controls { display:flex; gap:10px; flex-wrap:wrap; }
+
+/* pressed state highlight */
+.actions .btn.pressed { outline: 2px solid #4caf50; }
+
+/* --- very small screens (~≤380px) --- */
+@media (max-width: 380px){
+  body { margin: 8px; }
+  .container, .queue-container { padding: 10px; }
+
+  .searchbar {
+    gap: 6px; padding: 8px;
+    padding-top: calc(8px + env(safe-area-inset-top, 0px));
+  }
+
+  .card {
+    grid-template-columns: 56px 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px; padding: 8px;
+  }
+  .card img { width: 56px; height: 56px; }
+  .card > div:last-child { grid-column: 1 / -1; }
+  .card button { width: 100%; }
+
+  .nowplaying { grid-template-columns: 56px 1fr; gap:8px; padding:10px; }
+  .nowplaying img { width:56px; height:56px; }
+
+  .queue-item { 
+    grid-template-columns: 56px 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px; padding: 8px;
+  }
+  .queue-item img { width:56px; height:56px; }
+  .queue-item .actions { grid-column: 1 / -1; flex-direction:row; justify-content:space-between; }
+  .queue-item .actions .btn { flex: 1 1 auto; }
+}
+
+button:focus-visible { outline: 2px solid #4caf50; outline-offset: 2px; }
+button:hover:not(:disabled) { filter: brightness(1.08); }
+
+
+
