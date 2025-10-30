@@ -2,6 +2,16 @@
 
 import { loadQueue, saveQueue } from "../services/queueStore.js";
 
+
+//sanitizes & trims strings
+function cleanStr(val = "", max = 120) {
+  const s = String(val)
+    .replace(/[\u0000-\u001F]/g, "") // remove control chars
+    .replace(/\s+/g, " ")            // collapse spaces
+    .trim();
+  return s.length > max ? s.slice(0, max) : s;
+}
+
 // GET /api/queue
 export const getQueue = (_req, res) => {
   const items = loadQueue();
@@ -10,9 +20,20 @@ export const getQueue = (_req, res) => {
 
 // POST /api/queue { title, artist, requestedBy? }
 export const addQueueItem = (req, res) => {
-  const { title, artist, requestedBy } = req.body || {};
+  // sanitize
+  const title = cleanStr(req.body?.title, 120);
+  const artist = cleanStr(req.body?.artist, 120);
+  const requestedBy = cleanStr(req.body?.requestedBy ?? "anon", 60);
+
+  // validate
   if (!title || !artist) {
     return res.status(400).json({ error: "title and artist are required" });
+  }
+  if (title.length > 120 || artist.length > 120) {
+    return res.status(400).json({ error: "title/artist too long (max 120)" });
+  }
+  if (requestedBy.length > 60) {
+    return res.status(400).json({ error: "requestedBy too long (max 60)" });
   }
 
   const items = loadQueue();
