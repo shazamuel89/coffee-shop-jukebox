@@ -1,6 +1,6 @@
 // backend/routers/search.js
 import { Router } from "express";
-import { handleSearch } from "../controllers/SearchController.js";
+import { handleSearch } from "../../controllers/SearchController.js";
 
 const router = Router();
 

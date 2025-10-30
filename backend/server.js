@@ -12,12 +12,12 @@ import errorHandler from './middleware/errorHandler.js';
 // Import routers
 import healthRouter from './routes/health.js';
 import dbCheckRouter from './routes/dbCheck.js';
-import searchRouter from './routes/search.js';
-import requestRouter from './routes/request.js';
-import voteRouter from './routes/vote.js';
-import queueRouter from './routes/queue.js';
-import rulesRouter from './routes/rules.js';
-import reportRouter from './routes/report.js';
+import searchRouter from './routes/api/search.js';
+import requestRouter from './routes/api/request.js';
+import voteRouter from './routes/api/vote.js';
+import queueRouter from './routes/api/queue.js';
+import rulesRouter from './routes/api/rules.js';
+import reportRouter from './routes/api/report.js';
 
 
 const app = express();
