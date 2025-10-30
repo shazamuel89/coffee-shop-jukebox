@@ -1,4 +1,4 @@
-import VoteService from "../services/VoteService.js";
+import { applyVote } from "../services/VoteService.js";
 import validateRequiredParameters from "../utils/validateRequiredParameters.js";
 import validateParameterTypes from "../utils/validateParameterTypes.js";
 
@@ -25,12 +25,16 @@ const submitVote = async (req, res) => {
             return res.status(400).json({ error: typeError });
         }
 
-
         // All parameters present and types confirmed, so extract them
         const { queueItemId, userId, isUpvote } = req.body;
 
         // Pass to the service layer
-        const result = await VoteService.submitVote({ queueItemId, userId, isUpvote });
+        const result = await applyVote({ queueItemId, userId, isUpvote });
+        
+        // Check if operation returned a failure for the success object, meaning not found
+        if (result.success === false) {
+            return res.status(404).json(result);
+        }
 
         // Send confirmation response with result
         res.status(200).json(result);
@@ -39,3 +43,5 @@ const submitVote = async (req, res) => {
         res.status(500).json({ error: "Server error submitting vote." });
     }
 };
+
+export { submitVote };
