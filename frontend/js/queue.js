@@ -14,7 +14,7 @@
 - Change loadQueue()'s fetch call to not send currentUserId once session or JWT is set up
 */
 
-const placeholderImage = 'https://images.unsplash.com/photo-1711054824441-064a99073a0b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=580';
+const placeholderImage = '../public/placeholder.jpeg';
 
 // URL for fetching the queue data
 const queueUrl = 'https://coffee-shop-jukebox.onrender.com/api/queue';
