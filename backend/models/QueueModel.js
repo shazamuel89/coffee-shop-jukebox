@@ -1,5 +1,5 @@
 // backend/models/QueueModel.js
-import pool from "../config/dbConn.js";
+import { pool } from "../config/dbConn.js";
 
 /**
  * Retrieves all queue items with track metadata joined from Tracks table.
