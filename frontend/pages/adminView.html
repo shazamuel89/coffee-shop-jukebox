@@ -3,15 +3,15 @@
     <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>AdminView -v 1.0</title>
+	<title>Admin Dashboard — Coffee Shop Jukebox</title>
 	<link rel="stylesheet" href="../css/styles.css">
     </head>
     <body>
 	<div class="container">
 	    <!-- rules form — explicit, genre blacklist, length/request limits, etc. -->
 	    <div id="rules">
-		<h2>Administrator Rules</h2>
 		<form id="rulesForm" action="" method="post">
+		    <h2 style="text-align:center">Administrator Rules</h2>
 		    <label for="explicitCheck">Explicit songs allowed:</label>
 		    <input type="checkbox" name="explicitCheck" id="explicitCheck">
 		    <br>
@@ -35,10 +35,8 @@
 		</form>
 	    </div>
 	    <br><br><br>
-	    <!-- queue view, same as in queueView but with added playback controls -->
-	    <div id="queue">
-		<button onclick="test.printQueue()">click to refresh queue</button>
-	    </div>
+	    <!-- queue view, same as in index.html but with added playback controls -->
+	    <div id="queue-container"></div>
 	    <br><br><br>
 	    <!-- link to reports page -->
 	    <div id="reportsLink">
