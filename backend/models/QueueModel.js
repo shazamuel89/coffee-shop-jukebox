@@ -51,3 +51,71 @@ export const getAllQueueItems = async () => {
     throw err;
   }
 };
+
+/**
+ * Retrieves a single queue item (with joined track metadata) by its ID.
+ *
+ * @param {number} queueItemId - The ID of the queue item to fetch.
+ * @returns {Promise<Object|null>} - Returns the queue item object, or null if not found.
+ */
+export const getQueueItem = async (queueItemId) => {
+  const query = `
+    SELECT
+      q.id,
+      q.spotify_track_id AS "spotifyTrackId",
+      q.is_now_playing AS "isNowPlaying",
+      q.upvotes,
+      q.downvotes,
+      q.will_be_skipped AS "willBeSkipped",
+      q.requested_by AS "requestedBy",
+
+      t.title,
+      t.artists,
+      t.release_name AS "releaseName",
+      t.cover_art_url AS "coverArtUrl"
+    FROM
+      Queue q
+    JOIN
+      Tracks t
+    ON
+      q.spotify_track_id = t.spotify_track_id
+    WHERE
+      q.id = $1
+    LIMIT 1;
+  `;
+
+  try {
+    const { rows } = await pool.query(query, [queueItemId]);
+    return rows[0] || null;
+  } catch (err) {
+    console.error("Error in QueueModel.getQueueItem:", err);
+    throw err;
+  }
+};
+
+/**
+ * Updates the upvote/downvote counts and skip status for a queue item.
+ *
+ * @param {number} queueItemId
+ * @param {number} upvotes
+ * @param {number} downvotes
+ * @param {boolean} willBeSkipped
+ */
+export const updateVoteCountAndSkip = async (queueItemId, upvotes, downvotes, willBeSkipped) => {
+  const query = `
+    UPDATE Queue
+    SET
+      upvotes = $2,
+      downvotes = $3,
+      will_be_skipped = $4
+    WHERE
+      id = $1;
+  `;
+
+  try {
+    await pool.query(query, [queueItemId, upvotes, downvotes, willBeSkipped]);
+  } catch (err) {
+    console.error("Error in QueueModel.updateVoteCountAndSkip:", err);
+    throw err;
+  }
+};
