@@ -82,7 +82,7 @@ function buildBaseQueueItem(queueItem) {
     queueCard.className = 'list-group-item d-flex justify-content-between align-items-center';
     queueCard.innerHTML = `
         <div>
-            <img src="${queueItem.coverArtUrl && queueItem.coverArtUrl.trim() !== '' ? queueItem.coverArtUrl : placeholderImage}"
+            <img src="${placeholderImage}"
                  class="me-2" style="width:40px;height:40px;object-fit:cover;" />
             <strong>${queueItem.title || 'Unknown Title'}</strong>
             <!-- If multiple artists, then join by ', ' -->
