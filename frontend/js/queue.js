@@ -14,6 +14,8 @@
 - Change loadQueue()'s fetch call to not send currentUserId once session or JWT is set up
 */
 
+const placeholderImage = 'https://images.unsplash.com/photo-1711054824441-064a99073a0b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=580';
+
 // URL for fetching the queue data
 const queueUrl = 'https://coffee-shop-jukebox.onrender.com/api/queue';
 
@@ -49,16 +51,20 @@ async function loadQueue() {
         emptyMessage.classList.add('d-none');                                   // Now that we know there are queue items, make sure 'empty' message is not displayed
 
         queueItems.forEach(queueItem => renderQueueItem(queueItem));            // Render each queue item
+        return true;
     } catch (err) {
         console.error(err);
         emptyMessage.textContent = "Error loading queue.";                      // Set the 'empty' message to display error feedback
         emptyMessage.classList.remove('d-none');                                // Display the message
+        return false;
     }
 }
 
 function renderQueueItem(queueItem) {
     const queueCard = buildBaseQueueItem(queueItem);
     applySkipStyle(queueCard, queueItem);
+
+    queueCard.dataset.nowPlaying = queueItem.isNowPlaying ? "true" : "false";
 
     // Get upvote and downvote buttons
     const upButton = queueCard.querySelector('.upvote');
@@ -76,11 +82,22 @@ function buildBaseQueueItem(queueItem) {
     queueCard.className = 'list-group-item d-flex justify-content-between align-items-center';
     queueCard.innerHTML = `
         <div>
-            <img src="${queueItem.coverArtUrl}" class="me-2" style="width:40px;height:40px;object-fit:cover;" />
+            <img src="${queueItem.coverArtUrl || placeholderImage}" class="me-2" style="width:40px;height:40px;object-fit:cover;" />
             <strong>${queueItem.title || 'Unknown Title'}</strong>
             <!-- If multiple artists, then join by ', ' -->
             <div class="text-muted small">
-                ${Array.isArray(queueItem.artists) ? queueItem.artists.join(', ') : 'Unknown Artist'}
+                ${
+                    Array.isArray(queueItem.artists)
+                    ? queueItem.artists.map(a => a.name).join(', ')
+                    : (() => {
+                        try {
+                            const parsed = JSON.parse(queueItem.artists);
+                            return parsed.map(a => a.name).join(', ');
+                        } catch {
+                            return 'Unknown Artist';
+                        }
+                    })()
+                }
             </div>
             <div class="text-muted small">${queueItem.releaseName || 'Unknown Release'}</div>
         </div>
@@ -164,18 +181,29 @@ async function sendVote(queueItemId, isUpvote) {
 
 // Mirror "Now Playing" with first queue item
 function mirrorNowPlayingFromFirstItem() {
-    const first = document.querySelector('#queue-container .list-group-item');
     const np = document.querySelector('.nowplaying');
-    if (!first || !np) return;
+    if (!np) return;
 
-    const title = first.querySelector('strong')?.textContent?.trim() || 'Song Title';
-    const byline = first.querySelector('.text-muted.small')?.textContent?.trim() || 'Artist — Album';
-    const img = first.querySelector('img')?.src || 'https://via.placeholder.com/72';
+    // Find the queue item marked as now playing
+    const nowPlayingItem = document.querySelector('#queue-container .list-group-item[data-now-playing="true"]');
+
+    if (!nowPlayingItem) {
+        // If none is marked, show placeholder info
+        np.querySelector('img').src = placeholderImage;
+        np.querySelector('.title strong').textContent = 'No song playing';
+        np.querySelector('.byline').textContent = '';
+        return;
+    }
+
+    const title = nowPlayingItem.querySelector('strong')?.textContent?.trim() || 'Unknown Title';
+    const byline = nowPlayingItem.querySelector('.text-muted.small')?.textContent?.trim() || 'Unknown Artist';
+    const img = nowPlayingItem.querySelector('img')?.src || placeholderImage;
 
     np.querySelector('img').src = img;
     np.querySelector('.title strong').textContent = title;
     np.querySelector('.byline').textContent = byline;
 }
+
 
 // Refresh Queue & Mirror
 async function refreshQueue() {
@@ -192,6 +220,9 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 
 // Initial load
-document.addEventListener('DOMContentLoaded', () => {
-    loadQueue().then(mirrorNowPlayingFromFirstItem);
+document.addEventListener('DOMContentLoaded', async () => {
+    const ok = await loadQueue();
+    if (ok) {
+        mirrorNowPlayingFromFirstItem();
+    }
 });

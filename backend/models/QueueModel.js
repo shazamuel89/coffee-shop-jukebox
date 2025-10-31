@@ -30,7 +30,7 @@ export const getAllQueueItems = async () => {
       q.requested_by AS "requestedBy",
 
       t.title,
-      t.artists,
+      t.artists::text AS artists,
       t.release_name AS "releaseName",
       t.cover_art_url AS "coverArtUrl"
     FROM
@@ -70,7 +70,7 @@ export const getQueueItem = async (queueItemId) => {
       q.requested_by AS "requestedBy",
 
       t.title,
-      t.artists,
+      t.artists::text AS artists,
       t.release_name AS "releaseName",
       t.cover_art_url AS "coverArtUrl"
     FROM
