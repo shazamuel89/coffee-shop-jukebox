@@ -1,7 +1,7 @@
 import { storeVote, fetchUserVotesForQueueItems } from "../models/VoteModel.js";
 import { getQueueItem, updateVoteCountAndSkip } from "../models/QueueModel.js";
-import { getRules } from "../models/RuleModel.js";
-import { broadcastVoteChange } from "../services/RealtimeService.js";
+//import { getRules } from "../models/RuleModel.js";
+//import { broadcastVoteChange } from "../services/RealtimeService.js";
 
 // Simple DRY helper function to standardize errors
 const errorResponse = (errorMessage) => ({
@@ -36,7 +36,7 @@ const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     } // else storeVoteOperation === "unchanged"
 
     // Request the rule for votes from RuleModel
-    const { voteThreshold, minimumVotes } = await getRules(["voteThreshold", "minimumVotes"]);
+    const { voteThreshold, minimumVotes } = { voteThreshold: { value: 0.6 }, minimumVotes: { value: 5 } };//await getRules(["voteThreshold", "minimumVotes"]);
     if (voteThreshold == null) {
         return errorResponse("voteThreshold not found.");
     }
@@ -51,12 +51,14 @@ const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     await updateVoteCountAndSkip(queueItemId, upvotes, downvotes, willBeSkipped);
 
     // Broadcast vote changes to clients
+    /*
     broadcastVoteChange({
         queueItemId,
         upvotes,
         downvotes,
         willBeSkipped,
     });
+    */
 
     return { success: true };
 };
