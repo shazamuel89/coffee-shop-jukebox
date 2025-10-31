@@ -1,7 +1,6 @@
 /* Todo:
 - Uncomment line in buildBaseQueueItem() to account for multiple artists when backend is connected
 - Get the accurate currentUserId instead of using a placeholder
-- Change queueItem.cover to queueItem.coverArtUrl when connected to backend
 - Make vote counts match to color of vote button
 - Need 4 vote button styles: unpressed, unpressed hover, pressed, pressed hover
 - Need pressed to be more different from unpressed
@@ -12,15 +11,16 @@
   then don't allow this mini menu to open up on that queue item.
 - Make it so the text for each queue item scrolls back and forth if it is too long to fit into the area
 - Change sendVote() to update DOM through websockets instead of full reload
+- Change loadQueue()'s fetch call to not send currentUserId once session or JWT is set up
 */
 
 // URL for fetching the queue data
-queueUrl = '../public/data/tracks.sample.json';
+const queueUrl = 'https://coffee-shop-jukebox.onrender.com/api/queue';
 
-// URL for fetching the vote data
-voteUrl = '../api/vote';
+// URL for sending the votes
+const voteUrl = 'https://coffee-shop-jukebox.onrender.com/api/vote';
 
-// Id of the user currently loading the queue or sending the vote
+// Temporary placeholder id of the user currently loading the queue or sending the vote
 currentUserId = 0;
 
 // Will contain the list of queue items
@@ -31,24 +31,28 @@ const emptyMessage = document.getElementById('queue-empty');
 
 async function loadQueue() {
     try {
-        const response = await fetch(queueUrl);                         // Send a GET request to /api/queue endpoint
-        if (!response.ok) {                                             // If response has an HTTP status code not in 200 range, then throw error
+        const response = await fetch(`${queueUrl}?userId=${currentUserId}`);    // Send a GET request to /api/queue endpoint with the current user id
+        if (!response.ok) {                                                     // If response has an HTTP status code not in 200 range, then throw error
             throw new Error('Failed to fetch queue');
         }
-        const queueItems = await response.json();                       // Convert response to json
-    
-        queueContainer.innerHTML = '';                                  // Initially set queue to empty
 
-        if (!queueItems || queueItems.length === 0) {                   // If there are no queue items
-            emptyMessage.classList.remove('d-none');                    // Then display the 'empty' message
+        const data = await response.json();                                     // Convert response to json
+        const queueItems = data.items || [];
+
+        queueContainer.innerHTML = '';                                          // Initially set queue to empty
+
+        if (queueItems.length === 0) {                                          // If there are no queue items
+            emptyMessage.classList.remove('d-none');                            // Then display the 'empty' message and exit
             return;
         }
 
-        queueItems.forEach(queueItem => renderQueueItem(queueItem));    // Render each queue item
+        emptyMessage.classList.add('d-none');                                   // Now that we know there are queue items, make sure 'empty' message is not displayed
+
+        queueItems.forEach(queueItem => renderQueueItem(queueItem));            // Render each queue item
     } catch (err) {
         console.error(err);
-        emptyMessage.textContent = "Error loading queue.";              // Set the 'empty' message to display error feedback
-        emptyMessage.classList.remove('d-none');                        // Display the message
+        emptyMessage.textContent = "Error loading queue.";                      // Set the 'empty' message to display error feedback
+        emptyMessage.classList.remove('d-none');                                // Display the message
     }
 }
 
@@ -72,22 +76,22 @@ function buildBaseQueueItem(queueItem) {
     queueCard.className = 'list-group-item d-flex justify-content-between align-items-center';
     queueCard.innerHTML = `
         <div>
-            <img src="${queueItem.cover}" class="me-2" style="width:40px;height:40px;object-fit:cover;" />
+            <img src="${queueItem.coverArtUrl}" class="me-2" style="width:40px;height:40px;object-fit:cover;" />
             <strong>${queueItem.title || 'Unknown Title'}</strong>
-            <!-- If multiple artists, then join by ', '
-            <div class="text-muted small">${Array.isArray(queueItem.artists) ? queueItem.artists.join(', ') : queueItem.artist || 'Unknown Artist'}</div>
-            -->
-            <div class="text-muted small">${queueItem.artist || 'Unknown Artist'}</div>
+            <!-- If multiple artists, then join by ', ' -->
+            <div class="text-muted small">
+                ${Array.isArray(queueItem.artists) ? queueItem.artists.join(', ') : 'Unknown Artist'}
+            </div>
             <div class="text-muted small">${queueItem.releaseName || 'Unknown Release'}</div>
         </div>
         <div class="d-flex">
             <div class="vote-stack me-2">
                 <button class="upvote btn btn-sm btn-outline-success">▲</button>
-                <div class="vote-count upvote-count">${/*queueItem.upvotes*/0}</div>
+                <div class="vote-count upvote-count">${queueItem.upvotes ?? 0}</div>
             </div>
             <div class="vote-stack">
                 <button class="downvote btn btn-sm btn-outline-danger">▼</button>
-                <div class="vote-count downvote-count">${/*queueItem.downvotes*/0}</div>
+                <div class="vote-count downvote-count">${queueItem.downvotes ?? 0}</div>
             </div>
         </div>
     `;
@@ -103,18 +107,18 @@ function applySkipStyle(queueCard, queueItem) {
 
 // Hide the vote buttons on the queue items requested by the current user
 function applyHideUserRequestVoteButtons(queueItem, upButton, downButton) {
-    if (queueItem.userId === currentUserId) {
+    if (queueItem.requestedBy === currentUserId) {
         upButton.classList.add('d-none');
         downButton.classList.add('d-none');
     }
 }
 
-// Mark vote buttons as pressed if user has already pressed them
+// Mark vote buttons as pressed if user has already voted on that queue item
 function applyPreviousVoteStyle(queueItem, upButton, downButton) {
-    if (queueItem.myVote === 'up') {
+    if (queueItem.myVote === true) {
         upButton.classList.add('pressed');
     }
-    if (queueItem.myVote === 'down') {
+    if (queueItem.myVote === false) {
         downButton.classList.add('pressed');
     }
 }
@@ -122,23 +126,15 @@ function applyPreviousVoteStyle(queueItem, upButton, downButton) {
 // Attach click event listeners to the upvote and downvote buttons
 // A click event sends the vote with the queue item's id and vote type
 function attachVotePressHandlers(queueItem, upButton, downButton) {
-    upButton.addEventListener('click', () => {          // Attach click listeners to vote buttons
-        sendVote(queueItem.id, true);                   // Send the vote with the queue item's id and vote type
-        if (upButton.classList.contains('pressed')) {   // Give immediate feedback to the user (if button is already pressed, then unpress button)
-            upButton.classList.remove('pressed');
-        } else {
-            upButton.classList.add('pressed');
-            downButton.classList.remove('pressed');
-        }
+    upButton.addEventListener('click', async () => {
+        await sendVote(queueItem.id, true);
+        upButton.classList.toggle('pressed');
+        downButton.classList.remove('pressed');
     });
-    downButton.addEventListener('click', () => {
-        sendVote(queueItem.id, false);
-        if (downButton.classList.contains('pressed')) {
-            downButton.classList.remove('pressed');
-        } else {
-            downButton.classList.add('pressed');
-            upButton.classList.remove('pressed');
-        }
+    downButton.addEventListener('click', async () => {
+        await sendVote(queueItem.id, false);
+        downButton.classList.toggle('pressed');
+        upButton.classList.remove('pressed');
     });
 }
 
@@ -153,8 +149,7 @@ async function sendVote(queueItemId, isUpvote) {
         });
         // If response has an HTTP response code not in 200 range, throw an error
         if (!res.ok) {
-            console.error('Vote failed');
-            return;
+            throw new Error('Vote failed');
         }
 
         // For now: Reload queue from server
