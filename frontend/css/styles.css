@@ -8,6 +8,33 @@ body {
     margin: 2rem;
 }
 
+nav {
+    align-items: center;
+    border: 2px solid #444;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    max-width: 90%;
+    padding: 20px 10px;
+}
+nav a {
+    color: #eee;
+    text-decoration: none;
+}
+nav a:hover {
+    color: #AAA;
+}
+.navbar-brand {
+    font-size: 200%;
+    font-weight: bold;
+}
+nav ul {
+    list-style-type: none;
+    margin: auto;
+    text-align: center;
+}
+
 .container {
     max-width: 680px;
     margin: 0 auto;
@@ -148,10 +175,10 @@ fieldset {
 /* clamp long titles/artists so they don't overflow */
 .card strong,
 .card em {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* comfortable tap targets + readable inputs */
@@ -168,7 +195,7 @@ input[type="search"] { font-size: 16px; } /* prevents iOS zoom */
 
 /* section headers */
 .queue-header, .nowplaying-header { 
-  font-weight: 600; margin: 10px 0 6px; color: #eee;
+    font-weight: 600; margin: 10px 0 6px; color: #eee;
 }
 
 /* the list of items */
@@ -176,17 +203,17 @@ input[type="search"] { font-size: 16px; } /* prevents iOS zoom */
 
 /* queue item layout: cover | meta | actions (votes) */
 .queue-item { 
-  display: grid;
-  grid-template-columns: 64px 1fr 56px;
-  gap: 10px; align-items: center;
-  padding: 10px; border: 1px solid #222; border-radius: 12px; background:#121212;
+    display: grid;
+    grid-template-columns: 64px 1fr 56px;
+    gap: 10px; align-items: center;
+    padding: 10px; border: 1px solid #222; border-radius: 12px; background:#121212;
 }
 .queue-item img { width:64px; height:64px; border-radius:8px; object-fit:cover; }
 
 /* clamp long text */
 .queue-item .title,
 .queue-item .byline {
-  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
 }
 
 /* actions column */
@@ -201,9 +228,9 @@ input[type="search"] { font-size: 16px; } /* prevents iOS zoom */
 
 /* now playing block */
 .nowplaying { 
-  display:grid; grid-template-columns: 72px 1fr; gap:12px; 
-  padding:12px; border:1px solid #222; border-radius:12px; background:#151515; 
-  margin-bottom:12px;
+    display:grid; grid-template-columns: 72px 1fr; gap:12px; 
+    padding:12px; border:1px solid #222; border-radius:12px; background:#151515; 
+    margin-bottom:12px;
 }
 .nowplaying img { width:72px; height:72px; border-radius:10px; object-fit:cover; }
 .controls { display:flex; gap:10px; flex-wrap:wrap; }
@@ -213,34 +240,34 @@ input[type="search"] { font-size: 16px; } /* prevents iOS zoom */
 
 /* --- very small screens (~≤380px) --- */
 @media (max-width: 380px){
-  body { margin: 8px; }
-  .container, .queue-container { padding: 10px; }
+    body { margin: 8px; }
+    .container, .queue-container { padding: 10px; }
 
-  .searchbar {
-    gap: 6px; padding: 8px;
-    padding-top: calc(8px + env(safe-area-inset-top, 0px));
-  }
+    .searchbar {
+        gap: 6px; padding: 8px;
+        padding-top: calc(8px + env(safe-area-inset-top, 0px));
+    }
 
-  .card {
-    grid-template-columns: 56px 1fr;
-    grid-template-rows: auto auto;
-    gap: 8px; padding: 8px;
-  }
-  .card img { width: 56px; height: 56px; }
-  .card > div:last-child { grid-column: 1 / -1; }
-  .card button { width: 100%; }
+    .card {
+        grid-template-columns: 56px 1fr;
+        grid-template-rows: auto auto;
+        gap: 8px; padding: 8px;
+    }
+    .card img { width: 56px; height: 56px; }
+    .card > div:last-child { grid-column: 1 / -1; }
+    .card button { width: 100%; }
 
-  .nowplaying { grid-template-columns: 56px 1fr; gap:8px; padding:10px; }
-  .nowplaying img { width:56px; height:56px; }
+    .nowplaying { grid-template-columns: 56px 1fr; gap:8px; padding:10px; }
+    .nowplaying img { width:56px; height:56px; }
 
-  .queue-item { 
-    grid-template-columns: 56px 1fr;
-    grid-template-rows: auto auto;
-    gap: 8px; padding: 8px;
-  }
-  .queue-item img { width:56px; height:56px; }
-  .queue-item .actions { grid-column: 1 / -1; flex-direction:row; justify-content:space-between; }
-  .queue-item .actions .btn { flex: 1 1 auto; }
+    .queue-item { 
+        grid-template-columns: 56px 1fr;
+        grid-template-rows: auto auto;
+        gap: 8px; padding: 8px;
+    }
+    .queue-item img { width:56px; height:56px; }
+    .queue-item .actions { grid-column: 1 / -1; flex-direction:row; justify-content:space-between; }
+    .queue-item .actions .btn { flex: 1 1 auto; }
 }
 
 button:focus-visible { outline: 2px solid #4caf50; outline-offset: 2px; }

@@ -4,33 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Queue - Coffee Shop Jukebox</title>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3 px-3">
+    <nav>
         <a class="navbar-brand" href="#">Coffee Shop Jukebox</a>
-        <div>
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link active" href="index.html">Queue</a></li>
-                <li class="nav-item"><a class="nav-link" href="request.html">Make a Request</a></li>
-                <li class="nav-item"><a class="nav-link" href="rules.html">Rules</a></li>
+        <div class="navbar">
+            <ul>
+                <li><a href="index.html">Queue</a></li>
+                <li><a href="request.html">Request</a></li>
+                <li><a href="rules.html">Rules</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="container">
-        <h1 class="text-center mb-4">Generic Coffee Shop Name</h1>
+        <h1 style="text-align:center; margin:5px auto">Generic Coffee Shop Name</h1>
 
         <!-- Now Playing -->
         <h2 class="nowplaying-header">Now Playing</h2>
-        <div class="nowplaying mb-4 p-3 border rounded d-flex align-items-center">
-            <img src="https://via.placeholder.com/72" alt="Cover art" class="me-3 rounded" loading="lazy">
+        <div class="nowplaying">
+            <img src="https://via.placeholder.com/72" alt="Cover art" loading="lazy">
             <div>
                 <div class="title"><strong>Song Title</strong></div>
                 <div class="byline">Artist — <em>Album</em></div>
-                <div class="controls mt-2">
+                <div class="controls">
                     <button class="btn secondary">Pause</button>
                     <button class="btn secondary">Skip</button>
                 </div>
@@ -39,12 +37,11 @@
 
         <!-- Up Next -->
         <h2 class="queue-header">Up Next</h2>
-        <button id="refreshQueueBtn" class="btn btn-primary btn-sm mb-3">Refresh Queue</button>
-
         <div id="queue-container" class="list-group queue-list" role="list">
             <!-- Queue items will render here -->
         </div>
-        <div id="queue-empty" class="text-muted mt-3 d-none">No songs in queue.</div>
+        <div id="queue-empty">No songs in queue.</div>
+        <button id="refreshQueueBtn" style="margin-top:3px">Refresh Queue</button>
     </div>
 
     <script src="../js/queue.js"></script>
