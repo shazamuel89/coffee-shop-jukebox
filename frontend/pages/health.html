@@ -1,27 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">  
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Coffee Shop Jukebox — Health Check</title>
-  <link rel="stylesheet" href="../css/styles.css" />
-  <style>
-    .ok { color: green; }
-    .err { color: crimson; }
-    .btn { padding: .5rem 1rem; border: 1px solid #ccc; border-radius: .5rem; background:#e25353; cursor:pointer; }
-    .btn:hover { background:#e08686; }
-    pre { background:#4792dd; padding:1rem; border-radius:.5rem; overflow:auto; }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Health Check — Coffee Shop Jukebox</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .ok { color: green; }
+        .err { color: crimson; }
+        .btn { padding: .5rem 1rem; border: 1px solid #ccc; border-radius: .5rem; background:#e25353; cursor:pointer; }
+        .btn:hover { background:#e08686; }
+        pre { background:#4792dd; padding:1rem; border-radius:.5rem; overflow:auto; }
+    </style>
 </head>
 <body>
-  <h1>☕ Coffee Shop Jukebox (Local Frontend)</h1>
-  <p>This page lets you verify your local frontend can talk to the deployed backend.</p>
+    <nav>
+        <a class="navbar-brand" href="#">Coffee Shop Jukebox</a>
+        <div class="navbar">
+            <ul>
+                <li><a href="admin.html">Dashboard</a></li>
+                <li><a href="health.html">Status</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </div>
+    </nav>
 
-  <p><strong>API Base:</strong> <code id="apiBase"></code></p>
+    <div class="container">
+        <h1>☕ Coffee Shop Jukebox (Local Frontend)</h1>
+        <p>This page lets you verify your local frontend can talk to the deployed backend.</p>
 
-  <button class="btn" id="btnHealth">Check Backend Health</button>
-  <div id="health" style="margin-top:1rem;"></div>
+        <p><strong>API Base:</strong> <code id="apiBase"></code></p>
 
-  <script src="../js/health.js"></script>
+        <button class="btn" id="btnHealth">Check Backend Health</button>
+        <div id="health" style="margin-top:1rem;"></div>
+    </div>
+
+    <script src="../js/health.js"></script>
 </body>
 </html>

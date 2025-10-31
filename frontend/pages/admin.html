@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Admin Dashboard — Coffee Shop Jukebox</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <nav>
+	<a class="navbar-brand" href="#">Coffee Shop Jukebox</a>
+	<div class="navbar">
+	    <ul>
+		<li><a href="admin.html">Dashboard</a></li>
+		<li><a href="health.html">Status</a></li>
+		<li><a href="reports.html">Reports</a></li>
+	    </ul>
+	</div>
+    </nav>
+    <div class="container">
+	<!-- rules form — explicit, genre blacklist, length/request limits, etc. -->
+	<div id="rules">
+	    <form id="rulesForm" action="" method="post">
+		<h2 style="text-align:center">Administrator Rules - Generic Coffee Shop Name</h2>
+		<label for="explicitCheck">Explicit songs allowed:</label>
+		<input type="checkbox" name="explicitCheck" id="explicitCheck">
+		<br>
+		<label for="lengthLimit">Song length limit:</label>
+		<input type="text" name="lengthLimit" id="lengthLimit" maxlength="5" placeholder="12:34">
+		<label for="lengthCheckToggle">No limit</label>
+		<input type="checkbox" name="lengthCheckToggle" id="lengthCheckToggle">
+		<br>
+		<label for="requestLimit">Customer request limit:</label>
+		<input type="number" name="requestLimit" id="requestLimit" min="1">
+		<br>
+		<details>
+		    <summary>Allowed genres:</summary> 
+		    <fieldset name="genreWhitelist" id="genreWhitelist">
+			<ul id="genreList" class="collection">
+			    <!-- generate genres dynamically and add checkboxes -->
+			</ul>
+		    </fieldset>
+		</details>
+		<input type="submit" class="btn">
+	    </form>
+	</div>
+	<!-- queue view, same as in index.html but with added playback controls -->
+	<h2 class="nowplaying-header">Now Playing</h2>
+	<div class="nowplaying">
+	    <img src="https://via.placeholder.com/72" alt="Cover art" loading="lazy">
+	    <div>
+		<div class="title"><strong>Song Title</strong></div>
+		<div class="byline">Artist — <em>Album</em></div>
+		<div class="controls">
+		    <button class="btn secondary">Pause</button>
+		    <button class="btn secondary">Skip</button>
+		</div>
+	    </div>
+	</div>
+	<!-- Up Next -->
+	<h2 class="queue-header">Up Next</h2>
+	<div id="queue-container" class="list-group queue-list" role="list">
+	    <!-- Queue items will render here -->
+	</div>
+	<div id="queue-empty">No songs in queue.</div>
+	<button id="refreshQueueBtn" style="margin-top:3px">Refresh Queue</button>
+    </div>
+
+    <script src="../js/timeHandler.js"></script>
+    <script src="../js/genreList.js"></script>
+    <script src="../js/queue.js"></script>
+</body>
+</html>
