@@ -82,8 +82,7 @@ function buildBaseQueueItem(queueItem) {
     queueCard.className = 'list-group-item d-flex justify-content-between align-items-center';
     queueCard.innerHTML = `
         <div>
-            <img src="${placeholderImage}"
-                 class="me-2" style="width:40px;height:40px;object-fit:cover;" />
+            <img src="${placeholderImage}" class="me-2" style="width:40px;height:40px;object-fit:cover;" />
             <strong>${queueItem.title || 'Unknown Title'}</strong>
             <!-- If multiple artists, then join by ', ' -->
             <div class="text-muted small">
@@ -198,7 +197,7 @@ function mirrorNowPlayingFromFirstItem() {
 
     const title = nowPlayingItem.querySelector('strong')?.textContent?.trim() || 'Unknown Title';
     const byline = nowPlayingItem.querySelector('.text-muted.small')?.textContent?.trim() || 'Unknown Artist';
-    const img = nowPlayingItem.querySelector('img')?.src || placeholderImage;
+    const img = placeholderImage;
 
     np.querySelector('img').src = img;
     np.querySelector('.title strong').textContent = title;
