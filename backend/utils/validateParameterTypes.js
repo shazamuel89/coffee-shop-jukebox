@@ -1,29 +1,45 @@
 /**
  * Validates that given parameters match their expected data types.
  * Returns an error message string if a type mismatch is found, or null if all match.
- * 
- * @param {Object} dataObject - The object to validate (usually req.body)
+ *
+ * @param {Object} dataObject - The object to validate (e.g. req.body, req.query, etc.)
  * @param {Object} expectedTypes - Key/value pairs of expected parameter types
  *   e.g. { queueItemId: "number", userId: "number", isUpvote: "boolean" }
- * @returns {string|null} Error message string if mismatch, or null if all types are valid
+ * @returns {string|null} Error message string if mismatch, or null if all are valid
  */
-
 const validateParameterTypes = (dataObject, expectedTypes) => {
-    // For each name/type pair in the expected types object
-    for (const [parameterName, expectedType] of Object.entries(expectedTypes)) {
-        // Grab the actual value found in the data
-        const actualValue = dataObject[parameterName];
+  for (const [parameterName, expectedType] of Object.entries(expectedTypes)) {
+    const actualValue = dataObject[parameterName];
 
-        // Skip parameters that are undefined/null - could mean that parameter is not required, so handle separately
-        if (typeof actualValue === 'undefined' || actualValue === null) continue;
+    // Allow null/undefined to pass (use validateRequiredParameters separately)
+    if (typeof actualValue === "undefined" || actualValue === null) continue;
 
-        // If parameter's type doesn't match expected type, return error message
-        if (typeof actualValue !== expectedType) {
-            return `${paramName} does not match the expected type (${expectedType}).`;
-        }
+    let valid = false;
+
+    switch (expectedType) {
+      case "number":
+        valid = !isNaN(Number(actualValue));
+        break;
+      case "boolean":
+        valid =
+          actualValue === true ||
+          actualValue === false ||
+          actualValue === "true" ||
+          actualValue === "false";
+        break;
+      case "string":
+        valid = typeof actualValue === "string";
+        break;
+      default:
+        valid = typeof actualValue === expectedType;
     }
-    // Return null if all provided parameters match expected types
-    return null;
+
+    if (!valid) {
+      return `${parameterName} does not match the expected type (${expectedType}).`;
+    }
+  }
+
+  return null;
 };
 
 export default validateParameterTypes;

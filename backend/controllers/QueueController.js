@@ -2,6 +2,9 @@
 
 import { loadQueue, saveQueue } from "../services/queueStore.js";
 
+import * as QueueService from '../services/QueueService.js';
+import validateParameterTypes from '../utils/validateParameterTypes.js';
+
 
 //sanitizes & trims strings
 function cleanStr(val = "", max = 120) {
@@ -12,10 +15,35 @@ function cleanStr(val = "", max = 120) {
   return s.length > max ? s.slice(0, max) : s;
 }
 
-// GET /api/queue
-export const getQueue = (_req, res) => {
-  const items = loadQueue();
-  res.json({ count: items.length, items });
+// GET /api/queue?userId=${userId}
+export const getQueue = async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    // userId is optional, since admin may not provide it
+
+    const typeError = validateParameterTypes({ userId }, { userId: "number" });
+    if (typeError) {
+      return res.status(400).json({ success: false, error: typeError });
+    }
+
+    // Safely parse userId into number (or null if not provided)
+    const parsedUserId = userId ? parseInt(userId, 10) : null;
+
+    // Ask QueueService for full queue + this user's votes
+    const queueData = await QueueService.getQueue(parsedUserId);
+
+    res.json({
+      success: true,
+      count: queueData.length,
+      items: queueData,
+    });
+  } catch (err) {
+    console.error("Error in getQueue:", err);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to load queue" });
+  }
 };
 
 // POST /api/queue { title, artist, requestedBy? }
