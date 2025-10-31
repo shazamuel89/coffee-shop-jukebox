@@ -167,7 +167,36 @@ async function sendVote(queueItemId, isUpvote) {
     }
 }
 
-// Upon loading the document, load the queue
+// Mirror "Now Playing" with first queue item
+function mirrorNowPlayingFromFirstItem() {
+    const first = document.querySelector('#queue-container .list-group-item');
+    const np = document.querySelector('.nowplaying');
+    if (!first || !np) return;
+
+    const title = first.querySelector('strong')?.textContent?.trim() || 'Song Title';
+    const byline = first.querySelector('.text-muted.small')?.textContent?.trim() || 'Artist — Album';
+    const img = first.querySelector('img')?.src || 'https://via.placeholder.com/72';
+
+    np.querySelector('img').src = img;
+    np.querySelector('.title strong').textContent = title;
+    np.querySelector('.byline').textContent = byline;
+}
+
+// Refresh Queue & Mirror
+async function refreshQueue() {
+    await loadQueue();
+    mirrorNowPlayingFromFirstItem();
+}
+
+// Auto-refresh every 10s
+const AUTO_REFRESH_MS = 10000;
+setInterval(() => {
+    if (document.hasFocus()) {
+        refreshQueue();
+    }
+}, AUTO_REFRESH_MS);
+
+// Initial load
 document.addEventListener('DOMContentLoaded', () => {
-    loadQueue();
+    loadQueue().then(mirrorNowPlayingFromFirstItem);
 });
