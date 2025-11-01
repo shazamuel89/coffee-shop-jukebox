@@ -1,4 +1,4 @@
-// backend/routes/api/searchRouter.js
+// backend/routers/api/searchRouter.js
 
 import { Router } from "express";
 import { handleSearch } from "../../controllers/SearchController.js";

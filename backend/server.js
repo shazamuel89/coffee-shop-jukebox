@@ -11,14 +11,14 @@ import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 
 // Import routers
-import healthRouter from './routes/health.js';
-import dbCheckRouter from './routes/dbCheck.js';
-import searchRouter from './routes/api/searchRouter.js';
-import requestRouter from './routes/api/requestRouter.js';
-import voteRouter from './routes/api/voteRouter.js';
-import queueRouter from './routes/api/queueRouter.js';
-import rulesRouter from './routes/api/rulesRouter.js';
-import reportRouter from './routes/api/reportRouter.js';
+import healthRouter from './routers/health.js';
+import dbCheckRouter from './routers/dbCheck.js';
+import searchRouter from './routers/api/searchRouter.js';
+import requestRouter from './routers/api/requestRouter.js';
+import voteRouter from './routers/api/voteRouter.js';
+import queueRouter from './routers/api/queueRouter.js';
+import rulesRouter from './routers/api/rulesRouter.js';
+import reportRouter from './routers/api/reportRouter.js';
 
 
 const app = express();

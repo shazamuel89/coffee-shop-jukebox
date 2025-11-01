@@ -1,4 +1,4 @@
-// backend/routes/api/queueRouter.js
+// backend/routers/api/queueRouter.js
 
 import { Router } from "express";
 import {

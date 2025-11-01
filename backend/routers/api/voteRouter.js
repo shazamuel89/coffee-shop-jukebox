@@ -1,4 +1,4 @@
-// backend/routes/api/voteRouter.js
+// backend/routers/api/voteRouter.js
 
 import { Router } from "express";
 import * as VoteController from "../../controllers/VoteController.js";
