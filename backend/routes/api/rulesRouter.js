@@ -1,4 +1,4 @@
-// backend/routes/api/rules.js
+// backend/routes/api/rulesRouter.js
 
 import { Router } from "express";
 const router = Router();

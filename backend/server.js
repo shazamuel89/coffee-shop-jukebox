@@ -1,4 +1,5 @@
 // backend/server.js
+
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -12,12 +13,12 @@ import { notFound, errorHandler } from './middleware/errorHandler.js';
 // Import routers
 import healthRouter from './routes/health.js';
 import dbCheckRouter from './routes/dbCheck.js';
-import searchRouter from './routes/api/search.js';
-import requestRouter from './routes/api/request.js';
-import voteRouter from './routes/api/vote.js';
-import queueRouter from './routes/api/queue.js';
-import rulesRouter from './routes/api/rules.js';
-import reportRouter from './routes/api/report.js';
+import searchRouter from './routes/api/searchRouter.js';
+import requestRouter from './routes/api/requestRouter.js';
+import voteRouter from './routes/api/voteRouter.js';
+import queueRouter from './routes/api/queueRouter.js';
+import rulesRouter from './routes/api/rulesRouter.js';
+import reportRouter from './routes/api/reportRouter.js';
 
 
 const app = express();

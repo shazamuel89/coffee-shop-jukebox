@@ -1,4 +1,4 @@
-// backend/routes/api/report.js
+// backend/routes/api/reportRouter.js
 
 import { Router } from "express";
 const router = Router();
