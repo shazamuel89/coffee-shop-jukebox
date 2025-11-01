@@ -11,13 +11,13 @@ import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 
 // Import routers
-import healthRouter from './routers/health.js';
-import dbCheckRouter from './routers/dbCheck.js';
+import healthRouter from './routers/healthRouter.js';
+import dbCheckRouter from './routers/dbCheckRouter.js';
 import searchRouter from './routers/api/searchRouter.js';
 import requestRouter from './routers/api/requestRouter.js';
 import voteRouter from './routers/api/voteRouter.js';
 import queueRouter from './routers/api/queueRouter.js';
-import rulesRouter from './routers/api/rulesRouter.js';
+import ruleRouter from './routers/api/ruleRouter.js';
 import reportRouter from './routers/api/reportRouter.js';
 
 
@@ -61,7 +61,7 @@ app.use("/api/vote", voteRouter);
 app.use("/api/queue", queueRouter);
 
 // For viewing and changing request rules
-app.use("/api/rules", rulesRouter);
+app.use("/api/rule", ruleRouter);
 
 // For requesting reports
 app.use("/api/report", reportRouter);
