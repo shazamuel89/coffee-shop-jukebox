@@ -1,3 +1,5 @@
+// backend/middleware/sanitize.js
+
 // Sanitizes a specific query parameter (must run this middleware first because request parameters are initially guaranteed to be strings)
 export function sanitizeQueryParam(paramName) {
   return (req, _res, next) => {

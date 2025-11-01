@@ -1,4 +1,5 @@
-// Cross Origin Resource Sharing
+// backend/config/corsOptions.js
+
 const whitelist = [
     'https://coffee-shop-jukebox-frontend.onrender.com',
     'http://localhost:3000',
