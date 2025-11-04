@@ -1,5 +1,5 @@
 // backend/services/SearchService.js
-import { searchTracksOnSpotify } from "../adapters/spotifyAPIAdapter.js";
+import { searchTracksOnSpotify } from "../adapters/SpotifyAPIAdapter.js";
 
 /**
  * Runs business logic (currently none)
