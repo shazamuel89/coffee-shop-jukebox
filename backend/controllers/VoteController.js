@@ -37,9 +37,9 @@ export const submitVote = async (req, res) => {
         }
 
         // Send confirmation response with result
-        res.status(200).json({ vote: updatedVote });
+        return res.status(200).json({ vote: updatedVote });
     } catch (err) {
-        console.error("Error in VoteController.submitVote: ", err);
+        console.error("Error in VoteController.submitVote:", err);
         return res.status(500).json({ error: "Server error submitting vote." });
     }
 };

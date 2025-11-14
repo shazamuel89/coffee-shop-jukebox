@@ -21,9 +21,9 @@ export const getQueue = async (req, res) => {
     const queueData = await QueueService.getQueue({ userId, role });
     
     // Success, return data
-    return res.status(200).json({ data: queueData });
+    return res.status(200).json({ queue: queueData });
   } catch (err) {
-    console.error("Error in getQueue: ", err);
+    console.error("Error in QueueController.getQueue:", err);
     return res.status(500).json({ error: "Failed to load queue." });
   }
 };
@@ -49,15 +49,72 @@ export const removeQueueItem = async (req, res) => {
     // Success, return response
     return res.status(204).send();
   } catch(err) {
-    console.error("Error in removeQueueItem: ", err);
+    console.error("Error in QueueController.removeQueueItem:", err);
     return res.status(500).json({ error: "Failed to remove the queue item." })
   }
 };
 
-export const skipNowPlaying = (__req, res) => {
-  
+// Route: '/skip'
+// Validate queueItemId provided in request body, then send skip request to QueueService
+export const skipNowPlaying = async (req, res) => {
+  try {
+    const requiredParameters = ['queueItemId'];
+    const expectedTypes = {
+      queueItemId: 'string',
+    };
+
+    // Verify that all required parameters are present
+    const missingError = validateRequiredParameters(req.body, requiredParameters);
+    if (missingError) {
+      return res.status(400).json({ error: missingError });
+    }
+
+    // Validate parameter data types
+    const typeError = validateParameterTypes(req.body, expectedTypes);
+    if (typeError) {
+      return res.status(400).json({ error: typeError });
+    }
+
+    // All parameters present and types confirmed, so extract them
+    const { queueItemId } = req.body;
+
+    // Pass to the service layer
+    const skippedTrack = await QueueService.sendSkipUpdate({ queueItemId });
+
+    // Check if service returned a failure (meaning a mismatch between frontend skipped track and backend now playing)
+    if (!skippedTrack.success) {
+      return res.status(409).json({ error: skippedTrack.error });
+    }
+
+    // Send confirmation response
+    return res.status(204).send();
+  } catch(err) {
+    console.error("Error in QueueController.skipNowPlaying:", err);
+    return res.status(500).json({ error: "Server error while skipping track." });
+  }
 }
 
-export const startDay = (req, res) => {
+// Route: '/startup'
+// Tell QueueService to run startup tasks
+export const startDay = async (__req, res) => {
+  try {
+    // No required parameters for startDay()
 
+    // No parameters, so data types don't need validation
+
+    // No parameters to extract
+
+    const dayStarted = await QueueService.startDay();
+
+    // Check if operation returned a failure
+    if (!dayStarted.success) {
+      return res.status(400).json({ error: dayStarted.error });
+    }
+
+    // Send confirmation response
+    return res.status(204).send();
+  } catch(err) {
+    console.error("Error in QueueController.startDay:", err);
+    return res.status(500).json({ error: "Server error running startup tasks." });
+  }
 }
