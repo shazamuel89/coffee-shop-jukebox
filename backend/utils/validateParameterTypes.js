@@ -18,7 +18,7 @@ const validateParameterTypes = (dataObject, expectedTypes) => {
 
     switch (expectedType) {
       case "number":
-        valid = !isNaN(Number(actualValue));
+        valid = Number.isFinite(Number(actualValue));
         break;
       case "boolean":
         valid =

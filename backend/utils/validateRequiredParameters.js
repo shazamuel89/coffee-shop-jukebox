@@ -7,7 +7,7 @@
  * @returns {string|null} Returns an error message string if missing parameters, or null if all are present
  */
 
-const confirmRequiredParameters = (dataObject, requiredParameters) => {
+const validateRequiredParameters = (dataObject, requiredParameters) => {
     // Array to store list of names of missing parameters
     const missingParameters = [];
     for (const parameter of requiredParameters) {
@@ -37,4 +37,4 @@ const confirmRequiredParameters = (dataObject, requiredParameters) => {
     return null;
 }
 
-export default confirmRequiredParameters;
+export default validateRequiredParameters;

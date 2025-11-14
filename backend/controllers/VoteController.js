@@ -15,14 +15,14 @@ export const submitVote = async (req, res) => {
         const missingError = validateRequiredParameters(req.body, requiredParameters);
         if (missingError) {
             // If missing parameters, return the formatted error message
-            return res.status(400).json({ success: false, error: missingError });
+            return res.status(400).json({ error: missingError });
         }
 
         // Validate parameter data types
         const typeError = validateParameterTypes(req.body, expectedTypes);
         if (typeError) {
             // If parameter types don't match expected types, return the formatted error message
-            return res.status(400).json({ success: false, error: typeError });
+            return res.status(400).json({ error: typeError });
         }
 
         // All parameters present and types confirmed, so extract them
@@ -31,15 +31,15 @@ export const submitVote = async (req, res) => {
         // Pass to the service layer
         const updatedVote = await applyVote({ queueItemId, userId, isUpvote });
         
-        // Check if operation returned a failure for the success object, meaning not found
-        if (!updatedVote) {
-            return res.status(404).json({ success: false, error: "Vote could not be recorded." });
+        // Check if operation returned a failure for the success object
+        if (!updatedVote.success) {
+            return res.status(404).json({ error: updatedVote.error });
         }
 
         // Send confirmation response with result
-        res.status(200).json({ success: true, vote: updatedVote });
+        res.status(200).json({ vote: updatedVote });
     } catch (err) {
         console.error("Error in VoteController.submitVote: ", err);
-        res.status(500).json({ success: false, error: "Server error submitting vote." });
+        return res.status(500).json({ error: "Server error submitting vote." });
     }
 };
