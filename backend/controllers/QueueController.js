@@ -5,8 +5,22 @@ import validateRequiredParameters from '../utils/validateRequiredParameters.js';
 import validateParameterTypes from '../utils/validateParameterTypes.js';
 
 
-// Route: '/'
-// Fetch list of queue items for a specific user
+/**
+ * Retrieves the queue for the authenticated user, optionally annotated with user-specific data.
+ *
+ * Route: GET '/'
+ *
+ * @async
+ * @function getQueue
+ * @param {object} req - Express request object (contains authenticated `user`)
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends JSON response with queue data or an error status code
+ *
+ * @description
+ * - Extracts the user's ID and role from authentication middleware.
+ * - Delegates to QueueService.getQueue to fetch queue items.
+ * - Returns `200` with queue data on success, or `500` on internal error.
+ */
 export const getQueue = async (req, res) => {
   try {
     // No need to validate existence of user id since it has gone through authentication middleware
@@ -28,8 +42,25 @@ export const getQueue = async (req, res) => {
   }
 };
 
-// Route: '/:queueItemId'
-// Remove a queue item from the queue
+/**
+ * Removes a queue item identified by its ID.
+ *
+ * Route: DELETE '/:queueItemId'
+ *
+ * @async
+ * @function removeQueueItem
+ * @param {object} req - Express request object (contains `queueItemId` route param)
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends `204` on success, `404` if not found, or error codes
+ *
+ * @description
+ * - Extracts `queueItemId` from route params.
+ * - Delegates to QueueService.removeQueueItem.
+ * - Returns:
+ *    - `204` if the item was removed
+ *    - `404` if the item does not exist
+ *    - `500` if an internal error occurs
+ */
 export const removeQueueItem = async (req, res) => {
   try {
     const { queueItemId } = req.params;
@@ -54,8 +85,27 @@ export const removeQueueItem = async (req, res) => {
   }
 };
 
-// Route: '/skip'
-// Validate queueItemId provided in request body, then send skip request to QueueService
+/**
+ * Attempts to skip the currently playing track by verifying that the
+ * frontend-provided queueItemId matches the backend's now-playing ID.
+ *
+ * Route: POST '/skip'
+ *
+ * @async
+ * @function skipNowPlaying
+ * @param {object} req - Express request object (expects `queueItemId` in body)
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends `204` on success, `409` on mismatch, or validation errors
+ *
+ * @description
+ * - Validates required body fields and their types.
+ * - Calls QueueService.sendSkipUpdate to perform version check and skip logic.
+ * - Returns:
+ *    - `204` if skip is accepted
+ *    - `409` if the queueItemId is out-of-sync (client stale)
+ *    - `400` for validation errors
+ *    - `500` for internal server errors
+ */
 export const skipNowPlaying = async (req, res) => {
   try {
     const requiredParameters = ['queueItemId'];
@@ -92,10 +142,28 @@ export const skipNowPlaying = async (req, res) => {
     console.error("Error in QueueController.skipNowPlaying:", err);
     return res.status(500).json({ error: "Server error while skipping track." });
   }
-}
+};
 
-// Route: '/startup'
-// Tell QueueService to run startup tasks
+/**
+ * Executes startup tasks for the queue system (e.g., resetting state for a new day).
+ *
+ * Route: POST '/startup'
+ *
+ * @async
+ * @function startDay
+ * @param {object} __req - Unused Express request object
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends `204` on success or error status codes
+ *
+ * @description
+ * - Performs system-level initialization at the start of a day/session.
+ * - No parameters required.
+ * - Delegates to QueueService.startDay.
+ * - Returns:
+ *    - `204` on success
+ *    - `400` if service reports a failure
+ *    - `500` if an internal error occurs
+ */
 export const startDay = async (__req, res) => {
   try {
     // No required parameters for startDay()
@@ -117,4 +185,4 @@ export const startDay = async (__req, res) => {
     console.error("Error in QueueController.startDay:", err);
     return res.status(500).json({ error: "Server error running startup tasks." });
   }
-}
+};
