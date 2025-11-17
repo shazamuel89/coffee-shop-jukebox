@@ -130,6 +130,7 @@ export const removeQueueItem = async ({ queueItemId }) => {
         })
       : Promise.resolve();
 
+    // Execute both realtime update and notification concurrently
     await Promise.all([emitPromise, notifyPromise]);
     
     return deletedQueueItem;
@@ -169,12 +170,47 @@ export const sendPlayUpdate = async () => {
   }
 };
 
-// Run QueueService.advanceQueue(), send user whose request was skipped by admin to NotificationService (if queueItemId sent from frontend does not match now playing track in backend, return mismatch error)
-export const sendSkipUpdate = async ({ queueItemId }) => {
+/**
+ * Handles an admin skip action on the currently playing queue item.
+ *
+ * @async
+ * @function sendSkipUpdate
+ * @param {object} params - Parameters object
+ * @param {number} params.queueItemId - ID of the queue item the admin intends to skip
+ * @param {number|null} params.requestedByUserId - ID of the user who originally requested the track (null if not a request)
+ * @returns {Promise<void>} Resolves when the queue is advanced and notifications have been sent
+ *
+ * @description
+ * - Verifies that the provided queueItemId matches the actual now-playing item.
+ * - Throws if no track is currently playing or if the IDs do not match.
+ * - Delegates to `advanceQueue()` to trigger queue advancement, new playback, and realtime updates.
+ * - If the skipped item was a user request, sends a notification to that user.
+ * - All post-advance operations run sequentially for clarity and error traceability.
+ */
+export const sendSkipUpdate = async ({ queueItemId, requestedByUserId }) => {
   try {
+    // Validate that the provided queueItemId matches the currently playing track
+    const nowPlayingItem = await QueueModel.getNowPlayingItem();
+    if (!nowPlayingItem) {
+      throw new Error("No track is currently playing.");
+    }
+    if (nowPlayingItem.id !== queueItemId) {
+      throw new Error(`Skip mismatch: attempted to skip ${queueItemId}, but now playing is ${nowPlayingItem.id}`);
+    }
 
+    // Advance the queue
+    await advanceQueue();
+
+    // If skipped track was a request, notify user whose request was skipped by admin
+    if (requestedByUserId) {
+      const message = buildSkippedRequestMessage(queueItemId);
+      await NotificationService.notifyUser({
+        userId: requestedByUserId,
+        message,
+      });
+    }
   } catch(err) {
-    console.error("Error in QueueService.:", err);
+    console.error("Error in QueueService.sendSkipUpdate:", err);
     throw err;
   }
 };

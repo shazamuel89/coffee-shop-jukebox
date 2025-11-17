@@ -9,7 +9,7 @@ const errorResponse = (errorMessage) => ({
     error: errorMessage,
 });
 
-const applyVote = async ({ queueItemId, userId, isUpvote }) => {
+export const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     // Fetch the relevant queue item to update vote data
     const queueItem = await getQueueItem(queueItemId);
     if (queueItem == null) {
@@ -63,7 +63,7 @@ const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     return { success: true };
 };
 
-const getUserVotesForQueueItems = async (userId, queueItemIds) => {
+export const getUserVotesForQueueItems = async (userId, queueItemIds) => {
     // Fetch votes from user on current queue items
     const rows = await fetchUserVotesForQueueItems(userId, queueItemIds);
 
@@ -83,9 +83,4 @@ const determineSkipStatus = (upvotes, downvotes, voteThreshold, minimumVotes) =>
     }
     const ratio = downvotes / totalVotes;   // Get percentage of downvotes in totalVotes
     return (ratio >= voteThreshold);        // Skip if percentage of downvotes is at or above threshold
-};
-
-export {
-    applyVote,
-    getUserVotesForQueueItems,
 };

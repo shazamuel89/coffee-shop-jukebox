@@ -93,7 +93,7 @@ export const removeQueueItem = async (req, res) => {
  *
  * @async
  * @function skipNowPlaying
- * @param {object} req - Express request object (expects `queueItemId` in body)
+ * @param {object} req - Express request object (expects `queueItemId` and optionally `requestedByUserId` in body)
  * @param {object} res - Express response object
  * @returns {Promise<void>} Sends `204` on success, `409` on mismatch, or validation errors
  *
@@ -111,6 +111,7 @@ export const skipNowPlaying = async (req, res) => {
     const requiredParameters = ['queueItemId'];
     const expectedTypes = {
       queueItemId: 'string',
+      requestedByUserId: 'string',
     };
 
     // Verify that all required parameters are present
@@ -126,10 +127,10 @@ export const skipNowPlaying = async (req, res) => {
     }
 
     // All parameters present and types confirmed, so extract them
-    const { queueItemId } = req.body;
+    const { queueItemId, requestedByUserId } = req.body;
 
     // Pass to the service layer
-    const skippedTrack = await QueueService.sendSkipUpdate({ queueItemId });
+    const skippedTrack = await QueueService.sendSkipUpdate({ queueItemId, requestedByUserId });
 
     // Check if service returned a failure (meaning a mismatch between frontend skipped track and backend now playing)
     if (!skippedTrack.success) {

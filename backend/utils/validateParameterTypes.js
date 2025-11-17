@@ -11,7 +11,7 @@ const validateParameterTypes = (dataObject, expectedTypes) => {
   for (const [parameterName, expectedType] of Object.entries(expectedTypes)) {
     const actualValue = dataObject[parameterName];
 
-    // Allow null/undefined to pass (use validateRequiredParameters separately)
+    // Allow undefined/null to pass (use validateRequiredParameters separately)
     if (typeof actualValue === "undefined" || actualValue === null) continue;
 
     let valid = false;
