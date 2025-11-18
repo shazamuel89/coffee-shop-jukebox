@@ -1,5 +1,28 @@
 // backend/errors/AppError.js
 
+/**
+ * HOW TO USE:
+ * 
+ * For models:
+ * No error handling is needed in the model unless actions must be taken for specific errors.
+ * 
+ * For services:
+ * Import error classes needed from this file.
+ * Throw one of these errors below, giving a descriptive message as the argument.
+ * Try/catch blocks are only needed when domain-specific messages need to be given for calls to a model function,
+ * meaning that the service layer knows what the error from the model means for the overall system.
+ * 
+ * For controllers:
+ * Import error classes needed from this file
+ * Throw one of these errors below, giving a descriptive message as the argument.
+ * No try/catch blocks should be needed, but if they are used, make sure to call next(err) in the catch block instead of throw err.
+ * 
+ * For routers:
+ * Simply wrap all async function calls (essentially all controller functions) in asyncHandler, like this:
+ * router.post("/startup", confirmAdmin, asyncHandler(startDay));
+**/
+
+
 export class AppError extends Error {
   constructor(message, status = 500) {
     super(message);

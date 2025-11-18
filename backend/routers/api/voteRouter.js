@@ -10,6 +10,6 @@ const router = Router();
  * Body: { userId, queueItemId, isUpvote }
  * Description: Submits or updates a user's vote for a specific queue item.
  */
-router.post("/", VoteController.submitVote);
+router.post("/", asyncHandler(VoteController.submitVote));
 
 export default router;

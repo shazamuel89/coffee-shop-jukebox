@@ -1,6 +1,7 @@
 // backend/routers/api/queueRouter.js
 
 import { Router } from "express";
+import asyncHandler from "../../middleware/asyncHandler.js";
 
 // Import get and alter queue operations from queue controller
 import {
@@ -18,11 +19,11 @@ import {
 
 const router = Router();
 
-router.get("/", getQueue);
-router.delete("/:queueItemId", confirmAdmin, removeQueueItem);
-router.post("/skip", confirmAdmin, skipNowPlaying);
-router.post("/play", confirmAdmin, playNowPlaying);
-router.post("/pause", confirmAdmin, pauseNowPlaying);
-router.post("/startup", confirmAdmin, startDay);
+router.get("/", asyncHandler(getQueue));
+router.delete("/:queueItemId", confirmAdmin, asyncHandler(removeQueueItem));
+router.post("/skip", confirmAdmin, asyncHandler(skipNowPlaying));
+router.post("/play", confirmAdmin, asyncHandler(playNowPlaying));
+router.post("/pause", confirmAdmin, asyncHandler(pauseNowPlaying));
+router.post("/startup", confirmAdmin, asyncHandler(startDay));
 
 export default router;

@@ -1,19 +1,15 @@
 import { storeVote, fetchUserVotesForQueueItems } from "../models/VoteModel.js";
 import { getQueueItem, updateVoteCountAndSkip } from "../models/QueueModel.js";
+import { NotFoundError } from "../errors/AppError.js";
 //import { getRules } from "../models/RuleModel.js";
 //import { broadcastVoteChange } from "../services/RealtimeService.js";
 
-// Simple DRY helper function to standardize errors
-const errorResponse = (errorMessage) => ({
-    success: false,
-    error: errorMessage,
-});
 
 export const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     // Fetch the relevant queue item to update vote data
     const queueItem = await getQueueItem(queueItemId);
     if (queueItem == null) {
-        return errorResponse("Queue item not found.");
+        throw new NotFoundError("Queue item not found.");
     }
 
     // Extract the votes for the queue item and add the current vote
@@ -38,10 +34,10 @@ export const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     // Request the rule for votes from RuleModel
     const { voteThreshold, minimumVotes } = { voteThreshold: { value: 0.6 }, minimumVotes: { value: 5 } };//await getRules(["voteThreshold", "minimumVotes"]);
     if (voteThreshold == null) {
-        return errorResponse("voteThreshold not found.");
+        throw new NotFoundError("voteThreshold not found.");
     }
     if (minimumVotes == null) {
-        return errorResponse("minimumVotes not found.");
+        throw new NotFoundError("minimumVotes not found.");
     }
 
     // Evaluate skip condition

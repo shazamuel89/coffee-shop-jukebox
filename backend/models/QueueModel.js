@@ -1,6 +1,7 @@
 // backend/models/QueueModel.js
 import { pool } from "../config/dbConn.js";
 
+
 /**
  * Retrieves all queue items with track metadata joined from Tracks table.
  *
@@ -43,13 +44,8 @@ export const getAllQueueItems = async () => {
         q.is_now_playing DESC, q.position ASC, q.added_at ASC;
   `;
 
-  try {
-    const { rows } = await pool.query(query);
-    return rows;
-  } catch (err) {
-    console.error("Error in QueueModel.getAllQueueItems:", err);
-    throw err;
-  }
+  const { rows } = await pool.query(query);
+  return rows;
 };
 
 /**
@@ -84,13 +80,8 @@ export const getQueueItem = async (queueItemId) => {
     LIMIT 1;
   `;
 
-  try {
-    const { rows } = await pool.query(query, [queueItemId]);
-    return rows[0] || null;
-  } catch (err) {
-    console.error("Error in QueueModel.getQueueItem:", err);
-    throw err;
-  }
+  const { rows } = await pool.query(query, [queueItemId]);
+  return rows[0] || null;
 };
 
 /**
@@ -112,10 +103,5 @@ export const updateVoteCountAndSkip = async (queueItemId, upvotes, downvotes, wi
       id = $1;
   `;
 
-  try {
-    await pool.query(query, [queueItemId, upvotes, downvotes, willBeSkipped]);
-  } catch (err) {
-    console.error("Error in QueueModel.updateVoteCountAndSkip:", err);
-    throw err;
-  }
+  await pool.query(query, [queueItemId, upvotes, downvotes, willBeSkipped]);
 };

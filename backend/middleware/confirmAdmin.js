@@ -1,23 +1,20 @@
 // backend/middleware/confirmAdmin.js
 
-export function confirmAdmin(req, res, next) {
-    try {
-        const user = req.user;
+import { ForbiddenError, UnauthorizedError } from "../errors/AppError";
 
-        // Check that user data exists
-        if (!user?.spotifyId) {
-            return res.status(401).json({ message: "Not authenticated." });
-        }
+export function confirmAdmin(req, _res, next) {
+    const user = req.user;
 
-        // Ensure that user is an admin
-        if (!user.isAdmin) {
-            return res.status(403).json({ message: "Admin privileges required." });
-        }
-
-        // Confirmed that user is an admin, continue
-        next();
-    } catch(err) {
-        console.error("Error in confirmAdmin middleware:", err);
-        res.status(500).json({ message: "Internal server error." });
+    // Check that user data exists
+    if (!user?.spotifyId) {
+        throw new UnauthorizedError("Not authenticated.");
     }
+
+    // Ensure that user is an admin
+    if (!user.isAdmin) {
+        throw new ForbiddenError("Admin privileges required.");
+    }
+
+    // Confirmed that user is an admin, continue
+    next();
 }
