@@ -1,17 +1,32 @@
 // backend/middleware/errorHandler.js
 
-// 404 for anything that didn't match a route
-export function notFound(_req, res) {
-  res.status(404).json({ error: "Not found" });
+// Handles routes that didn't match anything
+export function notFound(req, _res, next) {
+  next({
+    status: 404,
+    message: `Route ${req.method} ${req.originalUrl} not found`,
+  });
 }
 
-// Central error handler for thrown/rejected errors
+// Centralized error handler
 export function errorHandler(err, _req, res, _next) {
-  const status = err?.status || 500;
-  const message = err?.message || "Server error";
-  // optional: log in dev
-  if (process.env.NODE_ENV !== "production") {
-    console.error("[ERROR]", status, message);
+  // Default behavior if someone throws a plain Error
+  const status = err.status || 500;
+  const message = err.message || "Server error";
+
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // In development, give full stack traces
+  if (!isProduction) {
+    console.error("ERROR:", {
+      status,
+      message,
+      stack: err.stack,
+    });
   }
-  res.status(status).json({ error: message });
+
+  res.status(status).json({
+    error: message,
+    ...(isProd ? {} : { stack: err.stack }), // stack only in dev
+  });
 }
