@@ -9,14 +9,71 @@ import {
 } from "../errors/AppError.js";
 
 
-// Tell QueueModel to store new queue item into queue, tell RealtimeService to update client devices
-export const storeSuccessfulRequest = async ({ request }) => {
+/**
+ * Stores a newly approved user track request in the queue and emits a realtime update.
+ *
+ * @async
+ * @function storeSuccessfulRequest
+ * @param {object} params
+ * @param {string} params.spotifyTrackId - Spotify track ID being added to the queue
+ * @param {number} params.requestedByUserId - User ID of the requesting customer
+ * @returns {Promise<void>}
+ *
+ * @description
+ * - Normalizes the request into a queue item format matching the Queue table schema.
+ * - Delegates to `QueueModel.appendQueueItem()` to:
+ *    - Calculate the correct position in the queue
+ *    - Insert the new queue row
+ *    - Return the inserted queue item (with ID, timestamps, etc.)
+ * - Emits a realtime “queueChanged” event with the added queue item so all clients update immediately.
+ */
+export const storeSuccessfulRequest = async ({ spotifyTrackId, requestedByUserId, }) => {
+  const queueItemData = {
+    spotify_track_id: spotifyTrackId,
+    requested_by: requestedByUserId,
+    is_request: true,
+    // Position is assigned by QueueModel
+  };
 
+  const newQueueItem = await QueueModel.appendQueueItem({ queueItemData });
+  RealtimeService.emit({
+    eventName: 'queueChanged',
+    payload: {
+      type: 'itemAdded',
+      queueItem: newQueueItem,
+    },
+  });
 };
 
-// Tell QueueModel to update a queue item's vote counts and skip flag, and send updates to RealtimeService
-export const storeUpdatedVotes = async ({ upvoteCount, downvoteCount, willBeSkipped }) => {
+/**
+ * Updates a queue item's vote counts and skip flag, then broadcasts changes.
+ *
+ * @async
+ * @function storeUpdatedVotes
+ * @param {object} params
+ * @param {number} params.queueItemId
+ * @param {number} params.upvoteCount
+ * @param {number} params.downvoteCount
+ * @param {boolean} params.willBeSkipped
+ *
+ * @description
+ * - Saves updated vote totals and skip status via QueueModel.
+ * - Emits a `votesChanged` event so clients can update their UI.
+ * - Payload includes the item ID, new vote counts, skip state, and update type.
+ */
+export const storeUpdatedVotes = async ({ queueItemId, upvoteCount, downvoteCount, willBeSkipped }) => {
+  await QueueModel.updateVoteCountAndSkip({ queueItemId, upvoteCount, downvoteCount, willBeSkipped });
 
+  RealtimeService.emit({
+    eventName: 'votesChanged',
+    payload: {
+      type: 'itemUpdated',
+      queueItemId,
+      upvoteCount,
+      downvoteCount,
+      willBeSkipped,
+    },
+  });
 };
 
 /**
@@ -39,7 +96,7 @@ export const getQueue = async ({ userId, role }) => {
   const isAdmin = (role === 'admin');
 
   // Retrieve all queue data from the QueueModel
-  const queueItems = await QueueModel.getAllQueueItems();
+  const queueItems = await QueueModel.fetchQueue();
 
   // If there are no items, short-circuit early
   if (!queueItems?.length) {
@@ -127,17 +184,56 @@ export const removeQueueItem = async ({ queueItemId }) => {
 
 // Tell QueueModel to advance queue, either handle default playlist needing to play or continue, or send request beginning to play to HistoryModel and send next track to play to SpotifyPlaybackAdapter, send queue update to RealtimeService, and tell NotificationService to notify users if their request was skipped due to votes
 export const advanceQueue = async () => {
-
+  const queueAdvanced = await QueueModel.advanceQueue();
+  // Putting this one off until later.
+  // The whole process of a track ending needs reworking.
+  // On no requests in the queue, I want the song to be selected by looking into the default playlist at the bookmarked offset and then 
+  // separately requesting that song, not playing directly from the default playlist but individually.
+  
 };
 
-// Send an update to RealtimeService with playback duration
-export const sendPauseUpdate = async () => {
-
+/**
+ * Emits a realtime update indicating that playback has been paused.
+ *
+ * @async
+ * @function sendPauseUpdate
+ * @param {object} params
+ * @param {number} params.playbackDuration - Current playback position in milliseconds
+ *
+ * @description
+ * Sends a `playbackChanged` event to all clients, marking playback as paused
+ * and providing the current playback duration.
+ */
+export const sendPauseUpdate = async ({ playbackDuration }) => {
+    RealtimeService.emit({
+    eventName: 'playbackChanged',
+    payload: {
+      type: 'playbackPaused',
+      playbackDuration,
+    },
+  });
 };
 
-// Send an update to RealtimeService with playback duration
-export const sendPlayUpdate = async () => {
-
+/**
+ * Emits a realtime update indicating that playback has resumed.
+ *
+ * @async
+ * @function sendPlayUpdate
+ * @param {object} params
+ * @param {number} params.playbackDuration - Current playback position in milliseconds
+ *
+ * @description
+ * Sends a `playbackChanged` event to all clients, marking playback as resumed
+ * and providing the current playback duration.
+ */
+export const sendPlayUpdate = async ({ playbackDuration }) => {
+  RealtimeService.emit({
+    eventName: 'playbackChanged',
+    payload: {
+      type: 'playbackResumed',
+      playbackDuration,
+    },
+  });
 };
 
 /**
@@ -185,7 +281,40 @@ export const playDefaultPlaylist = async () => {
 
 };
 
-// Tell QueueModel to empty the queue, tell VoteModel to empty the queue, request top tracks from HistoryModel, send list of tracks to SpotifyAPIAdapter to create default playlist and retrieve playlist URI, run QueueService.playDefaultPlaylist(), send first track to play to RealtimeService
-export const startDay = async () => {
+// Request top 100 requested tracks from HistoryModel and build default playlist on Spotify from them, saving the playlist URI in the db
+export const buildDefaultPlaylist = async () => {
 
+}
+
+/**
+ * Initializes the jukebox system for a new day.
+ *
+ * @async
+ * @function startDay
+ * @returns {Promise<void>} Resolves when the system has been reset, a new default playlist
+ *                          has been created and stored, and playback has begun.
+ *
+ * @description
+ * - Clears all existing queue entries and all vote records to ensure a clean system state.
+ * - Builds a new default playlist by:
+ *   - Retrieving the top-requested tracks from the History table.
+ *   - Passing those tracks to Spotify via `SpotifyAPIAdapter` to create a playlist.
+ *   - Persisting the resulting playlist URI (and initializing the bookmark index) in the database.
+ * - All reset operations (queue deletion, vote deletion, playlist creation) run concurrently
+ *   for efficiency, as none depend on each other.
+ * - After the playlist is created, delegates to `playDefaultPlaylist()` to:
+ *   - Fetch the most recently created default playlist entry.
+ *   - Begin playback using Spotify’s SDK at the stored track index (starting at 0).
+ * - This function represents the entry point for an admin's "Start Jukebox System" action.
+ */
+export const startDay = async () => {
+  const deleteQueuePromise = QueueModel.deleteQueue();
+  const deleteAllVotesPromise = VoteModel.deleteAllVotes();
+  // buildDefaultPlaylist may need to return the spotify playlist URI
+  const buildDefaultPlaylistPromise = buildDefaultPlaylist();
+
+  // Concurrently run processes
+  await Promise.all([deleteQueuePromise, deleteAllVotesPromise, buildDefaultPlaylistPromise]);
+
+  await playDefaultPlaylist();
 };

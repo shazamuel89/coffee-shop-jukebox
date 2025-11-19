@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS Genres CASCADE;
 DROP TABLE IF EXISTS Tracks CASCADE;
 DROP TABLE IF EXISTS Users CASCADE;
 DROP TABLE IF EXISTS Rules CASCADE;
+DROP TABLE IF EXISTS Default_Playlists CASCADE;
 
 
 CREATE TABLE Users (
@@ -71,4 +72,11 @@ CREATE TABLE Rules (
     type TEXT NOT NULL,
     description TEXT,
     last_updated TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE Default_Playlists (
+    id SERIAL PRIMARY KEY,
+    spotify_uri TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    track_index_bookmark INT NOT NULL DEFAULT 0
 );

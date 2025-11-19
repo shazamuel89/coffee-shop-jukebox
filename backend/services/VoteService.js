@@ -1,5 +1,5 @@
 import { storeVote, fetchUserVotesForQueueItems } from "../models/VoteModel.js";
-import { getQueueItem, updateVoteCountAndSkip } from "../models/QueueModel.js";
+import { fetchQueueItem, updateVoteCountAndSkip } from "../models/QueueModel.js";
 import { NotFoundError } from "../errors/AppError.js";
 //import { getRules } from "../models/RuleModel.js";
 //import { broadcastVoteChange } from "../services/RealtimeService.js";
@@ -7,7 +7,7 @@ import { NotFoundError } from "../errors/AppError.js";
 
 export const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     // Fetch the relevant queue item to update vote data
-    const queueItem = await getQueueItem(queueItemId);
+    const queueItem = await fetchQueueItem(queueItemId);
     if (queueItem == null) {
         throw new NotFoundError("Queue item not found.");
     }
