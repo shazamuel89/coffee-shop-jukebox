@@ -2,6 +2,7 @@
 
 import { Router } from "express";
 import asyncHandler from "../../middleware/asyncHandler.js";
+import confirmAdmin from "../../middleware/confirmAdmin.js";
 
 // Import get and alter queue operations from queue controller
 import {

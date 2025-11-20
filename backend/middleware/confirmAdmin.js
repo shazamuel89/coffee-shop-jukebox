@@ -1,8 +1,8 @@
 // backend/middleware/confirmAdmin.js
 
-import { ForbiddenError, UnauthorizedError } from "../errors/AppError";
+import { ForbiddenError, UnauthorizedError } from "../errors/AppError.js";
 
-export function confirmAdmin(req, _res, next) {
+export default function confirmAdmin(req, _res, next) {
     const user = req.user;
 
     // Check that user data exists
