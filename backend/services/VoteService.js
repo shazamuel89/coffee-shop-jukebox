@@ -16,12 +16,12 @@ export const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     let { upvotes, downvotes } = queueItem;
 
     // Record the vote in Votes table
-    const storeVoteOperation = await storeVote(queueItemId, userId, isUpvote);
+    const storeVoteResult = await storeVote(queueItemId, userId, isUpvote);
 
     // Check if user had already voted on the queue item and if their vote changed, recalculate votes accordingly
-    if (storeVoteOperation === "inserted") {
+    if (storeVoteResult.outcome === "inserted") {
         isUpvote ? upvotes++ : downvotes++;
-    } else if (storeVoteOperation === "switched") {
+    } else if (storeVoteResult.outcome === "switched") {
         if (isUpvote) {
             upvotes++;
             downvotes--;
@@ -29,7 +29,7 @@ export const applyVote = async ({ queueItemId, userId, isUpvote }) => {
             upvotes--;
             downvotes++;
         }
-    } // else storeVoteOperation === "unchanged"
+    } // else storeVoteOperation.operation === "unchanged"
 
     // Request the rule for votes from RuleModel
     const { voteThreshold, minimumVotes } = { voteThreshold: { value: 0.6 }, minimumVotes: { value: 5 } };//await getRules(["voteThreshold", "minimumVotes"]);
@@ -66,7 +66,7 @@ export const getUserVotesForQueueItems = async (userId, queueItemIds) => {
     // Create dictionary with queue item id as the key and vote type as the value
     const result = {};
     for (const row of rows) {
-        result[row.queue_item_id] = row.is_upvote;
+        result[row.queueItemId] = row.isUpvote;
     }
     // Return dictionary of vote types per queue item, any non-voted queue items will be None
     return result;

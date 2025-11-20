@@ -1,4 +1,5 @@
 // backend/services/QueueService.js
+
 import * as QueueModel from "../models/QueueModel.js";
 import * as VoteService from "./VoteService.js";
 import * as RealtimeService from "./RealtimeService.js";
@@ -28,14 +29,12 @@ import {
  * - Emits a realtime “queueChanged” event with the added queue item so all clients update immediately.
  */
 export const storeSuccessfulRequest = async ({ spotifyTrackId, requestedByUserId, }) => {
-  const queueItemData = {
-    spotify_track_id: spotifyTrackId,
-    requested_by: requestedByUserId,
-    is_request: true,
-    // Position is assigned by QueueModel
-  };
-
-  const newQueueItem = await QueueModel.appendQueueItem({ queueItemData });
+  const newQueueItem = await QueueModel.appendQueueItem({
+    spotifyTrackId,
+    requestedBy: requestedByUserId,
+    isRequest: true,
+  });
+  
   RealtimeService.emit({
     eventName: 'queueChanged',
     payload: {

@@ -1,10 +1,11 @@
 // backend/models/VoteModel.js
 
 import { pool } from "../config/dbConn.js";
+import camelcaseKeys from "camelcase-keys";
 
 
 // Store vote data in Votes table, checking if the user has already voted on that queue item, and if so, then simply update the vote direction on the same vote item
-// Return a string stating whether the vote has been "inserted", "switched", or "unchanged"
+// Return the updated row and a string stating whether the vote has been "inserted", "switched", or "unchanged"
 export const storeVote = async (queueItemId, userId, isUpvote) => {
     const query = `
         INSERT INTO
@@ -31,13 +32,15 @@ export const storeVote = async (queueItemId, userId, isUpvote) => {
                     'switched'
                 ELSE
                     'unchanged'
-            END AS outcome;
+            END AS outcome,
+            *;
     `;
 
     const parameters = [queueItemId, userId, isUpvote];
     const { rows } = await pool.query(query, parameters);
-    return rows[0].outcome;
-}
+    const row = rows[0];
+    return row ? camelcaseKeys(row) : null;
+};
 
 // Retrieve all votes from user for the queue items from Votes table
 export const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
@@ -50,22 +53,15 @@ export const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
         WHERE
             user_id = $1
             AND
-            queue_item_id = ANY($2)
+            queue_item_id = ANY($2);
     `;
 
     const parameters = [userId, queueItemIds];
     const { rows } = await pool.query(query, parameters);
-    return rows;
-}
+    return rows ? camelcaseKeys(rows) : null;
+};
 
 // Delete all entries in Votes table
 export const deleteAllVotes = async () => {
-    const query = `
-        DELETE
-        FROM
-            Votes
-    `;
-
-    const { rows } = await pool.query(query);
-    return rows;
-}
+    await pool.query(`DELETE FROM Votes`);
+};
