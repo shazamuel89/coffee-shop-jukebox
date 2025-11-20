@@ -2,6 +2,7 @@
 
 import { Router } from "express";
 import * as VoteController from "../../controllers/VoteController.js";
+import asyncHandler from "../../middleware/asyncHandler.js";
 
 const router = Router();
 

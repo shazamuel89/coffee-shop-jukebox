@@ -2,6 +2,7 @@
 
 import { Router } from "express";
 import { handleSearch } from "../../controllers/SearchController.js";
+import asyncHandler from "../../middleware/asyncHandler.js";
 
 const router = Router();
 
