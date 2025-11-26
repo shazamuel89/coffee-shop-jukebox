@@ -1,16 +1,21 @@
 // backend/controllers/SearchController.js
-import { Router } from "express";
+import { BadRequestError } from "../errors/AppError.js";
+import { searchTracks } from "../services/SearchService.js";
 
-const router = Router();
-
-// GET /api/search?q=term  (simple mock so it always works)
-router.get("/", (req, res) => {
+export const handleSearch = async (req, res) => {
   const q = (req.query.q || "").toString().trim();
-  if (!q) return res.status(400).json({ error: "Missing query param ?q=" });
-  res.json({
-    q,
-    results: [{ id: "mock1", title: "Blinding Lights", artist: "The Weeknd" }]
-  });
-});
 
-export default router;
+  if (!q) {
+    // Clear string message works better with your error middleware
+    throw new BadRequestError("Missing query param ?q=");
+  }
+
+  // Call the search service and capture the results
+  const results = await searchTracks(q);
+
+  // Send the query and results back to the client
+  return res.status(200).json({
+    q,
+    results,
+  });
+};
