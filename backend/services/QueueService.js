@@ -11,35 +11,43 @@ import {
 
 
 /**
- * Stores a newly approved user track request in the queue and emits a realtime update.
+ * Stores a newly approved track request in the queue and broadcasts a realtime update.
  *
  * @async
  * @function storeSuccessfulRequest
  * @param {object} params
  * @param {string} params.spotifyTrackId - Spotify track ID being added to the queue
- * @param {number} params.requestedByUserId - User ID of the requesting customer
+ * @param {number} params.requestedByUserId - ID of the user making the request
  * @returns {Promise<void>}
  *
  * @description
- * - Normalizes the request into a queue item format matching the Queue table schema.
- * - Delegates to `QueueModel.appendQueueItem()` to:
- *    - Calculate the correct position in the queue
- *    - Insert the new queue row
- *    - Return the inserted queue item (with ID, timestamps, etc.)
- * - Emits a realtime “queueChanged” event with the added queue item so all clients update immediately.
+ * Performs the following steps:
+ * 1. Appends a new queue item to the database using `QueueModel.appendQueueItem()`,
+ *    which handles queue positioning and returns the inserted record.
+ * 2. Retrieves full track metadata from `TrackModel.getTrack()` so the realtime payload
+ *    does not require clients to make additional fetches.
+ * 3. Combines the queue item and metadata into a single hydrated object.
+ * 4. Emits a realtime `queueChanged` event through `RealtimeService` to notify all
+ *    subscribed clients that a new item has been added.
  */
-export const storeSuccessfulRequest = async ({ spotifyTrackId, requestedByUserId, }) => {
+export const storeSuccessfulRequest = async ({ spotifyTrackId, requestedByUserId }) => {
   const newQueueItem = await QueueModel.appendQueueItem({
     spotifyTrackId,
     requestedBy: requestedByUserId,
     isRequest: true,
   });
+
+  const trackMetadata = await TrackModel.getTrack({ spotifyTrackId });
+  const queueItemWithMetadata = {
+    ...newQueueItem,
+    metadata: trackMetadata,
+  };
   
   RealtimeService.emit({
     eventName: 'queueChanged',
     payload: {
       type: 'itemAdded',
-      queueItem: newQueueItem,
+      queueItem: queueItemWithMetadata,
     },
   });
 };
