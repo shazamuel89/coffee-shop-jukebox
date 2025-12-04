@@ -8,8 +8,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/unit_testing --coverage",
     "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/integration_testing --coverage"
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/shazamuel89/coffee-shop-jukebox#readme",
   "dependencies": {
+    "camelcase-keys": "^10.0.1",
     "cors": "^2.8.5",
     "dayjs": "^1.11.18",
     "dotenv": "^17.2.2",
@@ -40,6 +41,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4"

@@ -1,31 +1,27 @@
 import { storeVote, fetchUserVotesForQueueItems } from "../models/VoteModel.js";
-import { getQueueItem, updateVoteCountAndSkip } from "../models/QueueModel.js";
+import { fetchQueueItem, updateVoteCountAndSkip } from "../models/QueueModel.js";
+import { NotFoundError } from "../errors/AppError.js";
 //import { getRules } from "../models/RuleModel.js";
 //import { broadcastVoteChange } from "../services/RealtimeService.js";
 
-// Simple DRY helper function to standardize errors
-const errorResponse = (errorMessage) => ({
-    success: false,
-    error: errorMessage,
-});
 
-const applyVote = async ({ queueItemId, userId, isUpvote }) => {
+export const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     // Fetch the relevant queue item to update vote data
-    const queueItem = await getQueueItem(queueItemId);
+    const queueItem = await fetchQueueItem(queueItemId);
     if (queueItem == null) {
-        return errorResponse("Queue item not found.");
+        throw new NotFoundError("Queue item not found.");
     }
 
     // Extract the votes for the queue item and add the current vote
     let { upvotes, downvotes } = queueItem;
 
     // Record the vote in Votes table
-    const storeVoteOperation = await storeVote(queueItemId, userId, isUpvote);
+    const storeVoteResult = await storeVote(queueItemId, userId, isUpvote);
 
     // Check if user had already voted on the queue item and if their vote changed, recalculate votes accordingly
-    if (storeVoteOperation === "inserted") {
+    if (storeVoteResult.outcome === "inserted") {
         isUpvote ? upvotes++ : downvotes++;
-    } else if (storeVoteOperation === "switched") {
+    } else if (storeVoteResult.outcome === "switched") {
         if (isUpvote) {
             upvotes++;
             downvotes--;
@@ -33,15 +29,15 @@ const applyVote = async ({ queueItemId, userId, isUpvote }) => {
             upvotes--;
             downvotes++;
         }
-    } // else storeVoteOperation === "unchanged"
+    } // else storeVoteOperation.operation === "unchanged"
 
     // Request the rule for votes from RuleModel
     const { voteThreshold, minimumVotes } = { voteThreshold: { value: 0.6 }, minimumVotes: { value: 5 } };//await getRules(["voteThreshold", "minimumVotes"]);
     if (voteThreshold == null) {
-        return errorResponse("voteThreshold not found.");
+        throw new NotFoundError("voteThreshold not found.");
     }
     if (minimumVotes == null) {
-        return errorResponse("minimumVotes not found.");
+        throw new NotFoundError("minimumVotes not found.");
     }
 
     // Evaluate skip condition
@@ -63,14 +59,14 @@ const applyVote = async ({ queueItemId, userId, isUpvote }) => {
     return { success: true };
 };
 
-const getUserVotesForQueueItems = async (userId, queueItemIds) => {
+export const getUserVotesForQueueItems = async (userId, queueItemIds) => {
     // Fetch votes from user on current queue items
     const rows = await fetchUserVotesForQueueItems(userId, queueItemIds);
 
     // Create dictionary with queue item id as the key and vote type as the value
     const result = {};
     for (const row of rows) {
-        result[row.queue_item_id] = row.is_upvote;
+        result[row.queueItemId] = row.isUpvote;
     }
     // Return dictionary of vote types per queue item, any non-voted queue items will be None
     return result;
@@ -83,9 +79,4 @@ const determineSkipStatus = (upvotes, downvotes, voteThreshold, minimumVotes) =>
     }
     const ratio = downvotes / totalVotes;   // Get percentage of downvotes in totalVotes
     return (ratio >= voteThreshold);        // Skip if percentage of downvotes is at or above threshold
-};
-
-export {
-    applyVote,
-    getUserVotesForQueueItems,
 };

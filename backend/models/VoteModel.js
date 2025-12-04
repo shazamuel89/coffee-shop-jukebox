@@ -1,4 +1,7 @@
+// backend/models/VoteModel.js
+
 import { pool } from "../config/dbConn.js";
+import camelcaseKeys from "camelcase-keys";
 
 /**
  * Stores vote data in Votes table, checking if the user has already voted on that queue item, and if so, then simply updates the vote direction on the same vote item.
@@ -34,8 +37,10 @@ const storeVote = async (queueItemId, userId, isUpvote) => {
                     'switched'
                 ELSE
                     'unchanged'
-            END AS outcome;
+            END AS outcome,
+            *;
     `;
+
     const parameters = [queueItemId, userId, isUpvote];
     try {
         const { rows } = await pool.query(query, parameters);
@@ -63,8 +68,9 @@ const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
         WHERE
             user_id = $1
             AND
-            queue_item_id = ANY($2)
+            queue_item_id = ANY($2);
     `;
+
     const parameters = [userId, queueItemIds];
     try {
         const { rows } = await pool.query(query, parameters);

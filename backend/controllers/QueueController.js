@@ -1,117 +1,136 @@
 // backend/controllers/QueueController.js
 
-import { loadQueue, saveQueue } from "../services/queueStore.js";
-
 import * as QueueService from '../services/QueueService.js';
-import validateParameterTypes from '../utils/validateParameterTypes.js';
+import validateRequestBody from '../utils/validateRequestBody.js';
 
 
-//sanitizes & trims strings
-function cleanStr(val = "", max = 120) {
-  const s = String(val)
-    .replace(/[\u0000-\u001F]/g, "") // remove control chars
-    .replace(/\s+/g, " ")            // collapse spaces
-    .trim();
-  return s.length > max ? s.slice(0, max) : s;
-}
-
-// GET /api/queue?userId=${userId}
+/**
+ * Retrieves the queue for the authenticated user, optionally annotated with user-specific data.
+ *
+ * Route: GET '/'
+ *
+ * @async
+ * @function getQueue
+ * @param {object} req - Express request object (contains authenticated `user`)
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends JSON response with queue data or an error status code
+ *
+ * @description
+ * - Extracts the user's ID and role from authentication middleware.
+ * - Delegates to QueueService.getQueue to fetch queue items.
+ * - Returns `200` with queue data on success, or `500` on internal error.
+ */
 export const getQueue = async (req, res) => {
-  try {
-    const { userId } = req.query;
+  // No need to validate existence of user id since it has gone through authentication middleware
+  // No need to validate type of user id since it has gone through authentication middleware
 
-    // userId is optional, since admin may not provide it
+  // Extract user's id and role (service needs to know if admin or not)
+  const userId = req.user.id;
+  const role = req.user.role;
 
-    const typeError = validateParameterTypes({ userId }, { userId: "number" });
-    if (typeError) {
-      return res.status(400).json({ success: false, error: typeError });
-    }
-
-    // Safely parse userId into number (or null if not provided)
-    const parsedUserId = userId ? parseInt(userId, 10) : null;
-
-    // Ask QueueService for full queue + this user's votes
-    const queueData = await QueueService.getQueue(parsedUserId);
-
-    res.json({
-      success: true,
-      count: queueData.length,
-      items: queueData,
-    });
-  } catch (err) {
-    console.error("Error in getQueue:", err);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load queue" });
-  }
+  // Pass to the service layer
+  const queueData = await QueueService.getQueue({ userId, role });
+    
+  // Success, return data
+  return res.status(200).json({ queue: queueData });
 };
 
-// POST /api/queue { title, artist, requestedBy? }
-export const addQueueItem = (req, res) => {
-  // sanitize
-  const title = cleanStr(req.body?.title, 120);
-  const artist = cleanStr(req.body?.artist, 120);
-  const requestedBy = cleanStr(req.body?.requestedBy ?? "anon", 60);
+/**
+ * Removes a queue item identified by its ID.
+ *
+ * Route: DELETE '/:queueItemId'
+ *
+ * @async
+ * @function removeQueueItem
+ * @param {object} req - Express request object (contains `queueItemId` route param)
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends `204` on success, `404` if not found, or error codes
+ *
+ * @description
+ * - Extracts `queueItemId` from route params.
+ * - Delegates to QueueService.removeQueueItem.
+ * - Returns:
+ *    - `204` if the item was removed
+ *    - `404` if the item does not exist
+ *    - `500` if an internal error occurs
+ */
+export const removeQueueItem = async (req, res) => {
+  const { queueItemId } = req.params;
 
-  // validate
-  if (!title || !artist) {
-    return res.status(400).json({ error: "title and artist are required" });
-  }
-  if (title.length > 120 || artist.length > 120) {
-    return res.status(400).json({ error: "title/artist too long (max 120)" });
-  }
-  if (requestedBy.length > 60) {
-    return res.status(400).json({ error: "requestedBy too long (max 60)" });
-  }
+  // queueItemId is a required parameter, but don't need to check existence since if it didn't exist it wouldn't use this route
+  // No need to validate type of queueItemId since it will always be a string from req.params
 
-  const items = loadQueue();
-  const item = {
-    id: Math.random().toString(36).slice(2) + Date.now().toString(36),
-    title: String(title),
-    artist: String(artist),
-    requestedBy: requestedBy ? String(requestedBy) : "anon",
-    addedAt: new Date().toISOString(),
-    up: 0,
-    down: 0,
-  };
+  // Pass to the service layer
+  await QueueService.removeQueueItem({ queueItemId });
 
-  items.push(item);
-  saveQueue(items);
-  res.status(201).json({ ok: true, item });
+  // Success, return response
+  return res.status(204).send();
 };
 
-// DELETE /api/queue/:id -> remove one item by id
-export const deleteQueueItem = (req, res) => {
-  const { id } = req.params;
-  const items = loadQueue();
-  const idx = items.findIndex((i) => i.id === id);
+/**
+ * Attempts to skip the currently playing track by verifying that the
+ * frontend-provided queueItemId matches the backend's now-playing ID.
+ *
+ * Route: POST '/skip'
+ *
+ * @async
+ * @function skipNowPlaying
+ * @param {object} req - Express request object (expects `queueItemId` and optionally `requestedByUserId` in body)
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends `204` on success, `409` on mismatch, or validation errors
+ *
+ * @description
+ * - Validates required body fields and their types.
+ * - Calls QueueService.sendSkipUpdate to perform version check and skip logic.
+ * - Returns:
+ *    - `204` if skip is accepted
+ *    - `409` if the queueItemId is out-of-sync (client stale)
+ *    - `400` for validation errors
+ *    - `500` for internal server errors
+ */
+export const skipNowPlaying = async (req, res) => {
+  validateRequestBody(req.body, {
+    queueItemId:        { type: 'number', required: true },
+    requestedByUserId:  { type: 'number', required: false },
+  });
 
-  if (idx === -1) {
-    return res.status(404).json({ error: "not found" });
-  }
+  // All parameters present and types confirmed, so extract them
+  const { queueItemId, requestedByUserId } = req.body;
 
-  const [removed] = items.splice(idx, 1);
-  saveQueue(items);
-  res.json({ ok: true, removed });
+  // Pass to the service layer
+  await QueueService.sendSkipUpdate({ queueItemId, requestedByUserId });
+
+  // Send confirmation response
+  return res.status(204).send();
 };
 
-// PATCH /api/queue/:id/vote { dir: "up" | "down" }
-export const voteQueueItem = (req, res) => {
-  const { id } = req.params;
-  const dir = (req.body?.dir || "").toLowerCase();
+/**
+ * Executes startup tasks for the queue system (e.g., resetting state for a new day).
+ *
+ * Route: POST '/startup'
+ *
+ * @async
+ * @function startDay
+ * @param {object} __req - Unused Express request object
+ * @param {object} res - Express response object
+ * @returns {Promise<void>} Sends `204` on success or error status codes
+ *
+ * @description
+ * - Performs system-level initialization at the start of a day/session.
+ * - No parameters required.
+ * - Delegates to QueueService.startDay.
+ * - Returns:
+ *    - `204` on success
+ *    - `400` if service reports a failure
+ *    - `500` if an internal error occurs
+ */
+export const startDay = async (__req, res) => {
+  // No required parameters for startDay()
+  // No parameters, so data types don't need validation
+  // No parameters to extract
 
-  if (!["up", "down"].includes(dir)) {
-    return res.status(400).json({ error: "dir must be 'up' or 'down'" });
-  }
+  await QueueService.startDay();
 
-  const items = loadQueue();
-  const item = items.find((i) => i.id === id);
-
-  if (!item) return res.status(404).json({ error: "not found" });
-
-  if (dir === "up") item.up += 1;
-  else item.down += 1;
-
-  saveQueue(items);
-  res.json({ ok: true, item });
+  // Send confirmation response
+  return res.status(204).send();
 };
