@@ -1,3 +1,5 @@
+-- Running db commands: `psql ${external_url} -f ${script_name}`
+
 DROP TABLE IF EXISTS Votes CASCADE;
 DROP TABLE IF EXISTS Queue CASCADE;
 DROP TABLE IF EXISTS History CASCADE;

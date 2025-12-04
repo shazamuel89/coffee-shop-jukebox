@@ -1,5 +1,4 @@
 -- seed.sql
--- Usage: psql -d postgresql://coffee_shop_jukebox_db_y6ax_user:d82jHKeKjLsde55PklQXsW92xDPYVUbF@dpg-d41qtbggjchc73b6sp9g-a.oregon-postgres.render.com/coffee_shop_jukebox_db_y6ax -f db_seed.sql
 -- This file inserts fake data for the Coffee Shop Jukebox schema.
 
 -- Clean up existing rows but keep schema
