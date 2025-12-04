@@ -1,7 +1,7 @@
 // backend/adapters/SpotifyAPIAdapter.js
 
 import dotenv from 'dotenv';
-import { AppError, BadRequestError, NotFoundError, UnauthorizedError } from '../errors/AppError';
+import { AppError, BadRequestError, NotFoundError, UnauthorizedError } from '../errors/AppError.js';
 
 dotenv.config();
 

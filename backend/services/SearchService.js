@@ -1,5 +1,5 @@
 // backend/services/SearchService.js
-import { searchTracksOnSpotify } from "../adapters/SpotifyAPIAdapter.js";
+import { requestSearchResults } from "../adapters/SpotifyAPIAdapter.js";
 
 /**
  * Runs business logic (currently none)
@@ -18,7 +18,7 @@ export async function searchTracks(term) {
   // - log analytics
 
   // Step: delegate to Spotify adapter
-  const rawResults = await searchTracksOnSpotify(term);
+  const rawResults = await requestSearchResults(term);
 
   // (Business logic placeholder — none currently)
   // Example of future logic:
