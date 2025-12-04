@@ -1,12 +1,12 @@
 // backend/routers/api/searchRouter.js
 
 import { Router } from "express";
-import { handleSearch } from "../../controllers/SearchController.js";
 import asyncHandler from "../../middleware/asyncHandler.js";
+import { searchTracks } from "../../controllers/SearchController.js";
 
 const router = Router();
 
-// GET /api/search?q=term (simple mock so it always works)
-router.get("/", asyncHandler(handleSearch));
+// GET /api/search?term=term
+router.get("/", asyncHandler(searchTracks));
 
 export default router;

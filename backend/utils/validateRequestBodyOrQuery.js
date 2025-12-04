@@ -1,7 +1,8 @@
-// backend/utils/validateParams.js
+// backend/utils/validateRequestBodyOrQuery.js
+
 import { BadRequestError } from "../errors/AppError.js";
 
-export default function validateRequestBody(data, schema) {
+export default function validateRequestBodyOrQuery({ data, schema }) {
     for (const [key, rules] of Object.entries(schema)) {
         const { type, required = false } = rules;
         const value = data[key];

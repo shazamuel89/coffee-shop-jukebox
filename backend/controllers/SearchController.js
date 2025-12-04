@@ -1,19 +1,25 @@
 // backend/controllers/SearchController.js
+
+import * as SearchService from "../services/SearchService.js";
+import validateRequestBodyOrQuery from "../utils/validateRequestBodyOrQuery.js";
+import cleanString from "../utils/cleanString.js";
 import { BadRequestError } from "../errors/AppError.js";
-import { searchTracks } from "../services/SearchService.js";
 
-export const handleSearch = async (req, res) => {
-  const q = (req.query.q || "").toString().trim();
+export const searchTracks = async (req, res) => {
+    validateRequestBodyOrQuery({
+        data: req.query,
+        schema: {
+            term: { type: 'string', required: true },
+        }
+    });
 
-  if (!q) {
-    throw new BadRequestError({ error: "Missing query param ?q=" });
-  }
+    const term = cleanString({ val: req.query.term });
 
-  await searchTracks(q);
+    if (!term.length) {
+        throw new BadRequestError("Search term cannot be empty.");
+    }
 
-  // Final formatting (if any) would happen here
-  res.json({
-    q,
-    results
-  });
-}
+    const results = await SearchService.searchTracks({ term });
+
+    res.status(200).json(results)
+};
