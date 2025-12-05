@@ -272,3 +272,140 @@ input[type="search"] { font-size: 16px; } /* prevents iOS zoom */
 
 button:focus-visible { outline: 2px solid #4caf50; outline-offset: 2px; }
 button:hover:not(:disabled) { filter: brightness(1.08); }
+
+
+
+/* ---------- Search-page scoped polish ---------- */
+
+/* container scope so nothing outside .searchpage is affected */
+.searchpage .searchbar {                                                    /* target only searchbar on pages with .searchpage */
+  position: sticky;                                                        /* keep search visible while scrolling */
+  top: 14px;                                                               /* small top offset so it doesn't hug the viewport edge */
+  background: rgba(20,20,20,0.66);                                         /* translucent card-like background for depth */
+  backdrop-filter: blur(6px);                                              /* slight blur behind card for iOS-like feel */
+  -webkit-backdrop-filter: blur(6px);                                      /* webkit-prefixed blur (mobile Safari) */
+  padding: 14px;                                                           /* comfortable internal spacing */
+  border-radius: 14px;                                                     /* rounded corners for card aesthetic */
+  border: 1px solid rgba(255,255,255,0.04);                                /* very subtle edge to separate from bg */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.55);                                 /* soft shadow to lift card off page */
+  display: grid;                                                           /* keep existing grid layout but with new looks */
+  gap: 10px;                                                               /* consistent spacing between children */
+}
+
+/* inline layout for search form only on this page */
+.searchpage #searchForm {                                                   /* scope only the search form on this page */
+  display: flex;                                                           /* put input and button on same row */
+  gap: 8px;                                                                /* small gap between input and button */
+  align-items: center;                                                     /* vertical align items center for visual balance */
+}
+
+/* pill-style input with icon and accessible sizes */
+.searchpage #searchForm input[type="search"] {                              /* scope the search input */
+  flex: 1 1 auto;                                                          /* allow input to expand to available space */
+  padding: 12px 14px 12px 40px;                                            /* add left padding for icon and comfortable height */
+  border-radius: 999px;                                                    /* pill-shaped input for touch friendliness */
+  border: 1px solid rgba(255,255,255,0.04);                                /* subtle border to define field edges */
+  background: linear-gradient(180deg, rgba(25,25,25,0.6), rgba(18,18,18,0.6)); /* slight gradient for depth */
+  color: #f2f2f2;                                                          /* high contrast text color */
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.02);                       /* tiny inset highlight for realism */
+  transition: box-shadow .18s ease, transform .12s ease;                   /* smooth focus/hover animations */
+  outline: none;                                                           /* remove default outline, use focus-visible below */
+  min-height: 46px;                                                        /* comfortable tappable height */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23AAAAAA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>"); /* small embedded search icon so no extra markup needed */
+  background-repeat: no-repeat;                                            /* prevent icon tiling */
+  background-position: 12px center;                                        /* position icon inside input */
+  background-size: 18px;                                                   /* scale icon to match input sizing */
+}
+
+/* focus-visible state for keyboard users only */
+.searchpage #searchForm input[type="search"]:focus {                        /* visible focus styling for ARIA/keyboard users */
+  box-shadow: 0 4px 18px rgba(0,0,0,0.6), 0 0 0 3px rgba(76,175,80,0.08);    /* subtle halo to indicate focus without clashing */
+  transform: translateY(-1px);                                              /* tiny lift to match button hover */
+}
+
+/* prominent, accessible submit button for search */
+.searchpage #searchForm button[type="submit"] {                             /* style only the submit button in scoped form */
+  padding: 10px 14px;                                                      /* comfortable padding for touch */
+  border-radius: 999px;                                                    /* pill button to match input */
+  min-width: 110px;                                                        /* ensure button is easily tappable */
+  background: linear-gradient(180deg, #2e7d32, #256028);                    /* green accent gradient to denote primary action */
+  color: #fff;                                                              /* white text for high contrast */
+  box-shadow: 0 6px 18px rgba(46,125,50,0.18), inset 0 -2px 0 rgba(0,0,0,0.14); /* shadow and inset to give a "pressable" look */
+  border: 0;                                                                /* remove default borders */
+  font-weight: 600;                                                         /* slightly bolder label for readability */
+  cursor: pointer;                                                          /* indicate interactivity */
+  transition: transform .12s ease, box-shadow .12s ease;                    /* smooth hover/press animations */
+}
+
+/* hover/focus affordance for the submit button */
+.searchpage #searchForm button[type="submit"]:hover:not(:disabled),
+.searchpage #searchForm button[type="submit"]:focus-visible {               /* hover & keyboard focus styles */
+  transform: translateY(-2px);                                             /* lift on hover/focus for feedback */
+  box-shadow: 0 10px 26px rgba(46,125,50,0.20);                            /* stronger shadow while hovered/focused */
+}
+
+/* results card tweaks scoped to this page only */
+.searchpage .results .card {                                                /* target only .card elements inside .results on this page */
+  padding: 12px;                                                            /* more generous internal padding */
+  border-radius: 12px;                                                      /* rounded corners to match searchbar */
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); /* subtle light top to dark bottom gradient */
+  border: 1px solid rgba(255,255,255,0.03);                                 /* very subtle border to separate cards */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.48);                                   /* lift cards slightly off page */
+  transition: transform .12s ease, box-shadow .12s ease;                    /* smooth hover lift */
+}
+
+/* hover lift for cards to suggest interactivity */
+.searchpage .results .card:hover {                                          /* hover behavior for card items */
+  transform: translateY(-4px);                                              /* card lifts slightly on hover */
+  box-shadow: 0 14px 36px rgba(0,0,0,0.6);                                  /* deeper shadow while hovered */
+}
+
+/* small improvements to meta text inside cards */
+.searchpage .card .meta {                                                   /* a helper element for meta text (title/artist) */
+  display: flex;                                                            /* stack title + artist vertically */
+  flex-direction: column;                                                   /* vertical stacking */
+  gap: 2px;                                                                 /* small gap between title and artist for readability */
+}
+
+/* stronger title contrast in cards */
+.searchpage .card strong {                                                  /* card title styling */
+  font-size: 1rem;                                                          /* ensure readable size */
+  color: #fff;                                                              /* full white for max contrast */
+}
+
+/* lighter artist / album text */
+.searchpage .card em {                                                      /* card subtitle styling */
+  font-size: 0.9rem;                                                        /* slightly smaller than title */
+  color: #cfcfcf;                                                           /* lighter gray to indicate secondary info */
+  font-style: normal;                                                       /* keep it non-italic for consistency */
+}
+
+/* scoped action button used for request actions inside cards */
+.searchpage .searchpage-action-btn {                                        /* style for request buttons inside results */
+  padding: 8px 12px;                                                        /* small pill button padding */
+  border-radius: 999px;                                                     /* pill shape for visual language consistency */
+  background: rgba(255,255,255,0.04);                                       /* subtle translucent background so it doesn't dominate */
+  border: 1px solid rgba(255,255,255,0.02);                                 /* faint border to define button shape */
+  color: #e9e9e9;                                                           /* slightly off-white text color */
+  min-width: 120px;                                                         /* ensure tappable width */
+  font-weight: 600;                                                         /* slightly bolder label for readability */
+  cursor: pointer;                                                          /* indicate interactivity */
+}
+
+/* small responsive tweaks to preserve layout on narrow devices */
+@media (max-width: 420px) {                                                  /* mobile adjustments */
+  .searchpage .searchbar {                                                   /* reduce padding for small screens */
+    padding: 10px;                                                          /* maintain comfortable spacing while saving room */
+    top: 8px;                                                               /* smaller top offset on tiny screens */
+  }
+  .searchpage #searchForm button[type="submit"] {                           /* make action fit on tiny screens */
+    min-width: 88px;                                                        /* reduce minimum width to avoid wrapping */
+    padding: 10px;                                                          /* consistent touch target */
+  }
+}
+
+/* maintain an accessible focus outline for keyboard users (scoped) */
+.searchpage button:focus-visible {                                           /* ensure keyboard focus is visible on this page */
+  outline: 2px solid #4caf50;                                                /* green outline to match accent and maintain accessibility */
+  outline-offset: 2px;                                                       /* offset so outline doesn't overlap element */
+}

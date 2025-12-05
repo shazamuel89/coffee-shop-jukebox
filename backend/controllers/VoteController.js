@@ -1,11 +1,14 @@
 import { applyVote } from "../services/VoteService.js";
-import validateRequestBody from "../utils/validateRequestBody.js";
+import validateRequestBodyOrQuery from "../utils/validateRequestBodyOrQuery.js";
 
 export const submitVote = async (req, res) => {
-    validateRequestBody(req.body, {
-        queueItemId: { type: 'number', required: true },
-        userId:      { type: 'number', required: true },
-        isUpvote:    { type: 'boolean', required: true },
+    validateRequestBodyOrQuery({
+        data: req.body,
+        schema: {
+            queueItemId: { type: 'number', required: true },
+            userId:      { type: 'number', required: true },
+            isUpvote:    { type: 'boolean', required: true },
+        }
     });
 
     // All parameters present and types confirmed, so extract them

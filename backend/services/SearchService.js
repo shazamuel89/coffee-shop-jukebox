@@ -1,30 +1,36 @@
 // backend/services/SearchService.js
-import { searchTracksOnSpotify } from "../adapters/SpotifyAPIAdapter.js";
 
-/**
- * Runs business logic (currently none)
- * Delegates to adapter
- * Returns cleaned results to controller
- */
-export async function searchTracks(term) {
-  if (!term || typeof term !== "string") {
-    throw new Error("Search term is required and must be a string.");
-  }
+import * as SpotifyAPIAdapter from "../adapters/SpotifyAPIAdapter.js";
 
-  // (Business logic placeholder — none currently)
-  // Example of future logic:
-  // - sanitize term
-  // - enforce min length
-  // - log analytics
+// Temporary setting for search results limit, may later be available as an admin setting
+const resultLimit = 20;
 
-  // Step: delegate to Spotify adapter
-  const rawResults = await searchTracksOnSpotify(term);
+export async function searchTracks({ term }) {
+    const searchResults = await SpotifyAPIAdapter.requestSearchResults({
+        term,
+        limit: resultLimit,
+    });
 
-  // (Business logic placeholder — none currently)
-  // Example of future logic:
-  // - filter out explicit content
-  // - apply result caps
-  // - reorder based on custom priority
+    const formattedTracks = searchResults.map(track => ({
+        id: track.id,
+        name: track.name,
 
-  return rawResults;
+        durationMs: track.durationMs,
+        explicit: track.explicit,
+        
+        spotifyUrl: track.spotifyUrl,
+
+        artists: (track.artists ?? []).map(artist => ({
+            name: artist.name,
+            spotifyUrl: artist.spotifyUrl,
+        })),
+
+        album: track.album ? {
+            name: track.album.name,
+            spotifyUrl: track.album.spotifyUrl,
+            images: track.album.images,
+        } : null
+    }));
+
+    return formattedTracks;
 }

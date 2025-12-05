@@ -1,94 +1,146 @@
-// This file loads sample tracks and powers the search UI
+// DOM elements
+const searchForm = document.getElementById('searchForm');
+const queryInput = document.getElementById('query');
+const resultsContainer = document.getElementById('results');
+const statusIndicator = document.getElementById('status');
+const toastElement = document.getElementById('toast');
 
-// file path to the temporary local data source
-const DATA_URL = '../public/data/tracks.sample.json';
-
-// Search input element where the user types queries into
-const q = document.getElementById('q');
-
-// div element where the search results will be rendered
-const results = document.getElementById('results');
-
-// div element that shows the loading/search status text
-const statusEl = document.getElementById('status');
-
-// div element that pops up with notifications
-const toastEl = document.getElementById('toast');
-
-// Stores song data once it is fetched
-let cache = [];
-
-// This allows debouncing search input so filter doesn't occur on every keystroke instantly
-let typingTimer = null;
+// Modal elements
+const modal = document.getElementById('modal');
+const bootstrapModal = new bootstrap.Modal(modal);
+const modalImage = document.getElementById('modalImage');
+const modalTitle = document.getElementById('modalTitle');
+const modalArtist = document.getElementById('modalArtist');
+const modalAlbum = document.getElementById('modalAlbum');
+const confirmRequestBtn = document.getElementById('confirmRequestBtn');
 
 // Presents a brief toast notification to the user - displays message briefly and then hides it
-function toast(msg) {
-  toastEl.textContent = msg;                                // Store message in element
-  toastEl.style.display = 'block';                          // Make the element visible
-  setTimeout(() => (toastEl.style.display = 'none'), 1500); // Hide the element after a brief period
+function toast(message) {
+    toastElement.textContent = message;
+    toastElement.style.display = 'block';
+    setTimeout(() => (toastElement.style.display = 'none'), 1500);
 }
 
-// Fetches data and stores it in the cache, displaying ui feedback
-async function loadData() {
-  statusEl.textContent = 'Loading songs…';  // Display loading status
-  const res = await fetch(DATA_URL);        // Fetch the data
-  cache = await res.json();                 // Store the data for later search use
-  statusEl.textContent = '';                // Clear loading indicator
+// Build search URL
+function searchUrl(term) {
+    return `https://coffee-shop-jukebox.onrender.com/api/search?term=${encodeURIComponent(term)}`;
 }
 
-// Renders the list of song objects to the page
-function render(list) {
-  results.innerHTML = '';                                             // Clear any previously rendered results
-  if (!list.length) {                                                 // If list is empty, then display feedback and exit
-    results.innerHTML = '<p>No matches. Try a different search.</p>';
-    return;
-  }
-  for (const t of list) {                                             // For each track in the list
-    const card = document.createElement('div');                       // Create a div element
-    card.className = 'card';                                          // Add 'card' class to div
-    card.setAttribute('role','listitem');                             // Set role for the div
-    card.innerHTML = `
-      <img src="${t.cover}" alt="Cover art for ${t.album}">
-      <div>
-        <div><strong>${t.title}</strong></div>
-        <div>${t.artist} — <em>${t.album}</em></div>
-      </div>
-      <div>
-        <button data-id="${t.id}">Request song</button>
-      </div>`;                                                        // Set up the display for the track
-    results.appendChild(card);                                        // Append the card onto results
-  }
+// Request URL
+const requestUrl = "https://coffee-shop-jukebox.onrender.com/api/request/";
+
+// Perform a search - returns a robust array of tracks with data formatted by backend for search results
+async function search(term) {
+    statusIndicator.textContent = 'Searching...';
+
+    try {
+        const response = await fetch(searchUrl(term));
+        if (!response.ok) {
+            throw new Error("Search failed");
+        }
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        toast("Search error");
+        return [];
+    } finally {
+        statusIndicator.textContent = '';
+    }
 }
 
-// Filters tracks from the cache based on the search term
-function filter(term) {
-  const s = term.trim().toLowerCase();  // Normalize input
-  if (!s) return cache;                 // If input was empty, return all results
-  return cache.filter(t =>              // Normalize tracks in cache by combining 'title artist album' and filter using search term
-    (t.title + ' ' + t.artist + ' ' + t.album).toLowerCase().includes(s)
-  );
+// Render search results - formats the results into an html appropriate form
+function renderResults(list) {
+    // Clear any previously rendered results
+    resultsContainer.innerHTML = '';
+
+    // If list is empty, then display feedback and exit
+    if (!list.length) {
+        resultsContainer.innerHTML = '<p>No matches found.</p>';
+        return;
+    }
+
+    for (const track of list) {
+        const card = document.createElement('div');
+        card.className = 'card p-2 d-flex gap-2 align-items-center bg-dark border-secondary';
+
+        // Attach the track's full dataset so modal can access it
+        card.dataset.trackJson = JSON.stringify(track);
+        
+        // Set role for the div for accessibility
+        card.setAttribute('role','listitem');
+
+
+        card.innerHTML = `
+            <img src="${track.album.images?.[2]?.url || ''}"
+                 class="rounded"
+                 alt="Album cover">
+            <div class="flex-grow-1">
+                <div><strong>${track.name}</strong></div>
+                <div>${track.artists.map(artist => artist.name).join(', ')}</div>
+                <div><em>${track.album?.name || ''}</em></div>
+            </div>
+        `;
+        resultsContainer.appendChild(card);
+    }
 }
 
-// Upon input to the search bar, the list is filtered as the user types
-q.addEventListener('input', () => {
-  clearTimeout(typingTimer);                                // Reset debounce timer
-  statusEl.textContent = 'Searching…';                      // Display feedback
-  typingTimer = setTimeout(() => {                          // Delay execution for a brief period
-    const list = filter(q.value);                           // Filter the results by the input currently in the search bar
-    render(list);                                           // Render the filtered results
-    statusEl.textContent = list.length ? '' : 'No results'; // If no results, display feedback
-  }, 200);
+// Show request modal for a given track using bootstrap
+function openModal(track) {
+    modalImage.src = track.album.images?.[1]?.url || '';
+    modalTitle.textContent = track.name;
+    modalArtist.textContent = track.artists.map(artist => artist.name).join(', ');
+    modalAlbum.textContent = track.album?.name || '';
+
+    // Store the track's id for request handling
+    confirmRequestBtn.dataset.id = track.id;
+    bootstrapModal.show();
+}
+
+// Hide request modal using bootstrap
+function closeModal() {
+    bootstrapModal.hide();
+}
+
+// Click handler for clicking on results
+resultsContainer.addEventListener('click', e => {
+    const card = e.target.closest('.card');
+    if (!card) {
+        return;
+    }
+
+    const track = JSON.parse(card.dataset.trackJson);
+    openModal(track);
 });
 
-// Upon click on the results element, clicks on request button requests the track
-results.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-id]');  // Identify the clicked button if any
-  if (!btn) return;                                 // Ignore clicks that are not on request button
-  btn.disabled = true;                              // Immediately disable the button to prevent duplicate clicks
-  btn.textContent = 'Requested ✓';                  // Display feedback on button
-  toast('Song added to queue');                     // Display feedback as a popup
-  // Later: POST to backend /requests with song id
+// Click event for confirming request
+confirmRequestBtn.addEventListener('click', async () => {
+    const id = confirmRequestBtn.dataset.id;
+    try {
+        const response = await fetch(requestUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ trackId: id }),
+        });
+        if (!response.ok) {
+            throw new Error("Request failed");            
+        }
+        toast("Song requested!");
+    } catch (err) {
+        toast("Error: could not request");
+    }
+    closeModal();
 });
 
-// Initially load the data and then render the full list before user searches
-loadData().then(() => render(cache));
+// Search form submit handler
+searchForm.addEventListener('submit', async (e) => {
+    // Prevent the browser from reloading the page on form submit
+    e.preventDefault();
+
+    const term = queryInput.value.trim();
+    if (!term) {
+        return;
+    }
+
+    const list = await search(term);
+    renderResults(list);
+});

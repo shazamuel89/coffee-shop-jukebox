@@ -1,4 +1,3 @@
-// backend/models/QueueModel.js
 import { pool } from "../config/dbConn.js";
 import camelcaseKeys from "camelcase-keys";
 

@@ -1,7 +1,7 @@
 // backend/controllers/QueueController.js
 
 import * as QueueService from '../services/QueueService.js';
-import validateRequestBody from '../utils/validateRequestBody.js';
+import validateRequestBodyOrQuery from '../utils/validateRequestBodyOrQuery.js';
 
 
 /**
@@ -89,9 +89,12 @@ export const removeQueueItem = async (req, res) => {
  *    - `500` for internal server errors
  */
 export const skipNowPlaying = async (req, res) => {
-  validateRequestBody(req.body, {
-    queueItemId:        { type: 'number', required: true },
-    requestedByUserId:  { type: 'number', required: false },
+  validateRequestBodyOrQuery({
+    data: req.body,
+    schema: {
+      queueItemId:        { type: 'number', required: true },
+      requestedByUserId:  { type: 'number', required: false },
+    }
   });
 
   // All parameters present and types confirmed, so extract them
