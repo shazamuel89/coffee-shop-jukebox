@@ -6,7 +6,7 @@
   <title>Search — Coffee Shop Jukebox</title>
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body> 
+<body class="searchpage"> 
     <nav>
         <a class="navbar-brand" href="#">Coffee Shop Jukebox</a>
         <div class="navbar">
@@ -22,7 +22,10 @@
         <div class="searchbar">
             <label for="q">Search songs (title, artist, album)</label>
             <!-- Search input box where users type queries into -->
-            <input id="q" type="search" placeholder="Start typing…" autocomplete="off" />
+            <form id="searchForm">
+                <input id="query" type="search" placeholder="Search for a track..." autocomplete="off" />
+                <button type="submit" aria-label="Search tracks">Search</button>
+            </form>
             <div id="status" class="loading" aria-live="polite"></div>
         </div>
         <!-- Container for list of filtered results -->
@@ -31,6 +34,17 @@
 
     <!-- Popup notification -->
     <div id="toast" class="toast" style="display:none;" aria-live="assertive"></div>
+
+    <div id="modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="modalClose" class="close">&times;</span>
+            <img id="modalImage" alt="Album cover" />
+            <h3 id="modalTitle"></h3>
+            <p id="modalArtist"></p>
+            <p id="modalAlbum"></p>
+            <button id="confirmRequestBtn">Request this track</button>
+        </div>
+    </div>
 
     <script src="../js/search.js"></script>
 </body>
