@@ -3,10 +3,15 @@
 import { pool } from "../config/dbConn.js";
 import camelcaseKeys from "camelcase-keys";
 
-
-// Store vote data in Votes table, checking if the user has already voted on that queue item, and if so, then simply update the vote direction on the same vote item
-// Return the updated row and a string stating whether the vote has been "inserted", "switched", or "unchanged"
-export const storeVote = async (queueItemId, userId, isUpvote) => {
+/**
+ * Stores vote data in Votes table, checking if the user has already voted on that queue item, and if so, then simply updates the vote direction on the same vote item.
+ *
+ * @param {number} queueItemId - The ID of the queue item to fetch.
+ * @param {number} userId - The ID of the user for whom the vote status is being checked.
+ * @param {boolean} isUpvote
+ * @return {string} - Returns a string stating whether the vote has been "inserted", "switched", or "unchanged".
+ */
+const storeVote = async (queueItemId, userId, isUpvote) => {
     const query = `
         INSERT INTO
             Votes
@@ -37,13 +42,23 @@ export const storeVote = async (queueItemId, userId, isUpvote) => {
     `;
 
     const parameters = [queueItemId, userId, isUpvote];
-    const { rows } = await pool.query(query, parameters);
-    const row = rows[0];
-    return row ? camelcaseKeys(row) : null;
-};
+    try {
+        const { rows } = await pool.query(query, parameters);
+        return rows[0].outcome;
+    } catch(err) {
+        console.error("Error in VoteModel.storeVote:", err);
+        throw err;
+    }
+}
 
-// Retrieve all votes from user for the queue items from Votes table
-export const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
+/**
+ * Retrieves all votes for queue items from a user from Votes.
+ *
+ * @param {number} userId 
+ * @param {array} queueItemIds - The items in queue.
+ * @return {Promise<Array>} - Returns all votes from a user.
+ */
+const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
     const query = `
         SELECT
             queue_item_id,
@@ -57,11 +72,37 @@ export const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
     `;
 
     const parameters = [userId, queueItemIds];
-    const { rows } = await pool.query(query, parameters);
-    return rows ? camelcaseKeys(rows) : null;
-};
+    try {
+        const { rows } = await pool.query(query, parameters);
+        return rows;
+    } catch(err) {
+        console.error("Error in VoteModel.fetchUserVotesForQueueItems:", err);
+        throw err;
+    }
+}
 
-// Delete all entries in Votes table
-export const deleteAllVotes = async () => {
-    await pool.query(`DELETE FROM Votes`);
+/**
+ * Delete all entries in Votes table.
+ *
+ * @return {Promise<Array>}
+ */
+const deleteAllVotes = async () => {
+    const query = `
+        DELETE
+        FROM
+            Votes
+    `;
+    try {
+        const { rows } = await pool.query(query);
+        return rows;
+    } catch(err) {
+        console.error("Error in VoteModel.deleteAllVotes:", err);
+        throw err;
+    }
+}
+
+export {
+    storeVote,
+    fetchUserVotesForQueueItems,
+    deleteAllVotes,
 };
