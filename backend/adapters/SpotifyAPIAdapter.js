@@ -158,28 +158,13 @@ const cleanTrackMetadata = ({ rawData }) => {
         name,
         duration_ms,
         explicit,
-        popularity,
-        preview_url,
-        is_local,
-        disc_number,
-        track_number,
-        external_ids,
         artists,
         album
     } = rawData;
 
     return {
-        id,
-        name,
-
-        durationMs: duration_ms,
-        explicit,
-        popularity,
-        previewUrl: preview_url,
-        isLocal: is_local,
-        discNumber: disc_number,
-        trackNumber: track_number,
-        isrc: external_ids?.isrc ?? null,
+        spotifyTrackId: id,
+        title: name,
 
         artists: (artists ?? []).map(artist => ({
             id: artist.id,
@@ -188,14 +173,16 @@ const cleanTrackMetadata = ({ rawData }) => {
             spotifyUrl: artist.external_urls?.spotify ?? null
         })),
 
-        album: album ? {
-            id: album.id,
-            name: album.name,
-            uri: album.uri ?? null,
-            spotifyUrl: album.external_urls?.spotify ?? null,
-            releaseDate: album.release_date ?? null,
-            totalTracks: album.total_tracks ?? null,
-            images: album.images ?? []   // [{ url, height, width }]
-        } : null
+        releaseName: album?.name ?? "",
+        releaseId: album?.id ?? "",
+        coverArtUrl: album?.images?.[0]?.url ?? "",
+
+        // Spotify doesn't provide track-level genres
+        genres: [],
+
+        isExplicit: explicit,
+        duration: duration_ms,
+
+        lastFetched: new Date().toISOString(),
     };
 };

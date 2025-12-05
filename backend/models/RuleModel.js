@@ -5,7 +5,7 @@ import { pool } from '../config/dbConn.js';
  *
  * @return {array} - List of all administrative playback rules.
  */
-const fetchRules = async () => {
+export const fetchRules = async () => {
     const query = `
 	    SELECT
 	        *
@@ -26,7 +26,7 @@ const fetchRules = async () => {
  *
  * @return {array} - List of administrative playback rules pertaining to vote skipping.
  */
-const fetchVoteRules = async () => {
+export const fetchVoteRules = async () => {
     const query = `
 	    SELECT 
 	        *

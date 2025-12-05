@@ -5,7 +5,7 @@ import { pool } from '../config/dbConn.js';
  *
  * @param {object} track - The track and its associated metadata.
  */
-const storeTrack = async (track) => { 
+const storeTrack = async ({ track }) => { 
     const { spotifyTrackId, title, artists, releaseName, releaseId, coverArtUrl, genres, isExplicit, duration, lastFetched } = track;
     const query = `
 	    INSERT INTO
