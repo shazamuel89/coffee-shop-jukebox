@@ -6,7 +6,7 @@ import { pool } from "../config/dbConn.js";
  * @param {number} limit - Number of tracks to include.
  * @return {Promise<Array>}
  */
-const fetchTopTracks = async (limit) => {
+export const fetchTopTracks = async (limit) => {
     const query = `
 	SELECT 
 	    *
