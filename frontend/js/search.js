@@ -61,7 +61,7 @@ function renderResults(list) {
 
     for (const track of list) {
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = 'card p-2 d-flex gap-2 align-items-center bg-dark border-secondary';
 
         // Attach the track's full dataset so modal can access it
         card.dataset.trackJson = JSON.stringify(track);
@@ -71,8 +71,10 @@ function renderResults(list) {
 
 
         card.innerHTML = `
-            <img src="${track.album.images?.[2]?.url || ''}" class="thumbnail" alt="Album cover">
-            <div class="metadata">
+            <img src="${track.album.images?.[2]?.url || ''}"
+                 class="rounded"
+                 alt="Album cover">
+            <div class="flex-grow-1">
                 <div><strong>${track.name}</strong></div>
                 <div>${track.artists.map(artist => artist.name).join(', ')}</div>
                 <div><em>${track.album?.name || ''}</em></div>

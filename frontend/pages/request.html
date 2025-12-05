@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Make a Request - Coffee Shop Jukebox</title>
-  <link rel="stylesheet" href="../css/styles.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Make a Request - Coffee Shop Jukebox</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body class="searchpage"> 
+<body> 
     <nav>
         <a class="navbar-brand" href="#">Coffee Shop Jukebox</a>
         <div class="navbar">
@@ -17,34 +18,54 @@
             </ul>
         </div>
     </nav>
-  <!-- New search UI -->
-    <div class="container">
-        <div class="searchbar">
-            <label for="q">Search songs (title, artist, album)</label>
+    <!-- Main container -->
+    <div class="container mt-4">
+        <!-- Search bar -->
+        <div class="mb-3">
+            <label for="query" class="form-label">Search songs (title, artist, album)</label>
             <!-- Search input box where users type queries into -->
-            <form id="searchForm">
-                <input id="query" type="search" placeholder="Search for a track..." autocomplete="off" />
-                <button type="submit" aria-label="Search tracks">Search</button>
+            <form id="searchForm" class="input-group">
+                <input id="query"
+                       type="search"
+                       placeholder="Search for a track..."
+                       autocomplete="off"
+                       class="form-control" />
+                <button type="submit" aria-label="Search tracks" class="btn btn-outline-light">
+                    Search
+                </button>
             </form>
-            <div id="status" class="loading" aria-live="polite"></div>
+            <div id="status" class="mt-2" aria-live="polite"></div>
         </div>
-        <!-- Container for list of filtered results -->
+        <!-- Container for list of results -->
         <div id="results" class="results" role="list"></div>
     </div>
 
     <!-- Popup notification -->
     <div id="toast" class="toast" style="display:none;" aria-live="assertive"></div>
 
-    <div id="modal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span id="modalClose" class="close">&times;</span>
-            <img id="modalImage" alt="Album cover" />
-            <h3 id="modalTitle"></h3>
-            <p id="modalArtist"></p>
-            <p id="modalAlbum"></p>
-            <button id="confirmRequestBtn">Request this track</button>
+    <div id="modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" alt="Album cover" class="img-fluid rounded mb-3" />
+                    <p id="modalArtist" class="mb-1"></p>
+                    <p id="modalAlbum" class="text-muted"></p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmRequestBtn" class="btn btn-success">Request this track</button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="../js/search.js"></script>
 </body>
