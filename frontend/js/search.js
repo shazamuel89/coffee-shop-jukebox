@@ -7,11 +7,11 @@ const toastElement = document.getElementById('toast');
 
 // Modal elements
 const modal = document.getElementById('modal');
+const bootstrapModal = new bootstrap.Modal(modal);
 const modalImage = document.getElementById('modalImage');
 const modalTitle = document.getElementById('modalTitle');
 const modalArtist = document.getElementById('modalArtist');
 const modalAlbum = document.getElementById('modalAlbum');
-const modalClose = document.getElementById('modalClose');
 const confirmRequestBtn = document.getElementById('confirmRequestBtn');
 
 // Presents a brief toast notification to the user - displays message briefly and then hides it
@@ -84,7 +84,7 @@ function renderResults(list) {
     }
 }
 
-// Show request modal for a given track
+// Show request modal for a given track using bootstrap
 function openModal(track) {
     modalImage.src = track.album.images?.[1]?.url || '';
     modalTitle.textContent = track.name;
@@ -93,7 +93,12 @@ function openModal(track) {
 
     // Store the track's id for request handling
     confirmRequestBtn.dataset.id = track.id;
-    modal.style.display = 'block';
+    bootstrapModal.show();
+}
+
+// Hide request modal using bootstrap
+function closeModal() {
+    bootstrapModal.hide();
 }
 
 // Click handler for clicking on results

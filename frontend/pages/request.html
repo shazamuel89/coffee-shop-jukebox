@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body> 
+<body class="searchpage"> 
     <nav>
         <a class="navbar-brand" href="#">Coffee Shop Jukebox</a>
         <div class="navbar">
@@ -19,22 +19,21 @@
         </div>
     </nav>
     <!-- Main container -->
-    <div class="container mt-4">
+    <div class="container">
         <!-- Search bar -->
-        <div class="mb-3">
-            <label for="query" class="form-label">Search songs (title, artist, album)</label>
+        <div class="searchbar">
+            <label for="query">Search songs (title, artist, album)</label>
             <!-- Search input box where users type queries into -->
-            <form id="searchForm" class="input-group">
+            <form id="searchForm">
                 <input id="query"
                        type="search"
                        placeholder="Search for a track..."
-                       autocomplete="off"
-                       class="form-control" />
-                <button type="submit" aria-label="Search tracks" class="btn btn-outline-light">
+                       autocomplete="off" />
+                <button type="submit" aria-label="Search tracks">
                     Search
                 </button>
             </form>
-            <div id="status" class="mt-2" aria-live="polite"></div>
+            <div id="status" class="loading" aria-live="polite"></div>
         </div>
         <!-- Container for list of results -->
         <div id="results" class="results" role="list"></div>
