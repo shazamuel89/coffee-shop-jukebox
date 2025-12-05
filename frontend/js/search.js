@@ -96,10 +96,6 @@ function openModal(track) {
     modal.style.display = 'block';
 }
 
-function closeModal() {
-    modal.style.display = 'none';
-}
-
 // Click handler for clicking on results
 resultsContainer.addEventListener('click', e => {
     const card = e.target.closest('.card');
@@ -110,9 +106,6 @@ resultsContainer.addEventListener('click', e => {
     const track = JSON.parse(card.dataset.trackJson);
     openModal(track);
 });
-
-// Click event for closing modal
-modalClose.addEventListener('click', closeModal);
 
 // Click event for confirming request
 confirmRequestBtn.addEventListener('click', async () => {
