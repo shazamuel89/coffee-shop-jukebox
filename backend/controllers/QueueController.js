@@ -25,8 +25,8 @@ export const getQueue = async (req, res) => {
   // No need to validate type of user id since it has gone through authentication middleware
 
   // Extract user's id and role (service needs to know if admin or not)
-  const userId = req.user.id;
-  const role = req.user.role;
+  const userId = req.query.userId;  // Temporarily pass in query parameters
+  const role = 'customer';  // Temporary hard coding
 
   // Pass to the service layer
   const queueData = await QueueService.getQueue({ userId, role });
