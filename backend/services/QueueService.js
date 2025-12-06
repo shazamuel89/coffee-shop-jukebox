@@ -139,6 +139,7 @@ export const getQueue = async ({ userId, role }) => {
   }));
 
   // Return the final merged queue data
+  console.log("QUEUE WITH VOTES:", queueWithVotes)
   return queueWithVotes;
 };
 
