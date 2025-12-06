@@ -3,6 +3,7 @@
 import * as QueueModel from "../models/QueueModel.js";
 import * as VoteService from "./VoteService.js";
 import * as RealtimeService from "./RealtimeService.js";
+import * as TrackModel from "../models/TrackModel.js";
 import {
   BadRequestError,
   NotFoundError,
