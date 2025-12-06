@@ -13,6 +13,8 @@ export const processTrackRequest = async ({ spotifyTrackId, requestedByUserId })
     // Get track's full metadata
     const trackMetadata = await SpotifyAPIAdapter.fetchTrackMetadata({ spotifyTrackId });
 
+    console.log("TRACK FROM SPOTIFY:", trackMetadata)
+
     // Get all current rules
     const rules = await RuleModel.fetchRules();
 
