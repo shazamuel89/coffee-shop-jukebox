@@ -32,7 +32,7 @@ export const requestTrack = async (req, res) => {
     const { spotifyTrackId, requestedByUserId } = req.body;
 
     // Pass to the service layer
-    await RequestService.processTrackRequest({ spotifyTrackId, requestedByUserId });
+    const result = await RequestService.processTrackRequest({ spotifyTrackId, requestedByUserId });
 
     // Send confirmation response with status code depending on whether request was accepted
     if (result.added) {

@@ -120,7 +120,7 @@ confirmRequestBtn.addEventListener('click', async () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                trackId: id,
+                spotifyTrackId: id,
                 requestedByUserId: 1 // Hard code user id for now
             }),
         });
