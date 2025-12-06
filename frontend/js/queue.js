@@ -39,7 +39,7 @@ async function loadQueue() {
         }
 
         const data = await response.json();                                     // Convert response to json
-        const queueItems = data.items || [];
+        const queueItems = Array.isArray(data.queue) ? data.queue : [];
 
         queueContainer.innerHTML = '';                                          // Initially set queue to empty
 
