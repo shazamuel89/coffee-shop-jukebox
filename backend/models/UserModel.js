@@ -1,4 +1,5 @@
 import { pool } from '../config/dbConn.js';
+import camelcaseKeys from "camelcase-keys";
 
 /**
  * Fetches timestamp of user's last request

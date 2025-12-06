@@ -1,4 +1,5 @@
 import { pool } from '../config/dbConn.js';
+import camelcaseKeys from "camelcase-keys";
 
 /**
  * Fetches all rules.
