@@ -119,10 +119,13 @@ confirmRequestBtn.addEventListener('click', async () => {
         const response = await fetch(requestUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ trackId: id }),
+            body: JSON.stringify({
+                trackId: id,
+                requestedByUserId: 1 // Hard code user id for now
+            }),
         });
         if (!response.ok) {
-            throw new Error("Request failed");            
+            throw new Error("Request failed");
         }
         toast("Song requested!");
     } catch (err) {

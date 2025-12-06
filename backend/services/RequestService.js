@@ -9,10 +9,10 @@ import * as TrackService from '../services/TrackService.js';
 // Main function that handles requests and calls helper functions, returns bool for if request was accepted
 export const processTrackRequest = async ({ spotifyTrackId, requestedByUserId }) => {
     // Get track's full metadata
-    const trackMetadata = SpotifyAPIAdapter.fetchTrackMetadata({ spotifyTrackId });
+    const trackMetadata = await SpotifyAPIAdapter.fetchTrackMetadata({ spotifyTrackId });
 
     // Get all current rules
-    const rules = RuleModel.fetchRules();
+    const rules = await RuleModel.fetchRules();
 
     // Check if track meets the rules
     const ruleCheck = evaluateTrackAgainstRules({ trackMetadata, rules });
@@ -28,7 +28,7 @@ export const processTrackRequest = async ({ spotifyTrackId, requestedByUserId })
     }
 
     // Get time of last request from requesting user
-    const userLastRequestTimestamp = UserModel.fetchLastRequestTime({ userId });
+    const userLastRequestTimestamp = await UserModel.fetchLastRequestTime({ userId: requestedByUserId });
 
     // Check if the user has waited long enough to request again
     const cooldownCheck = checkUserRequestCooldown({ userLastRequestTimestamp, rules });
@@ -44,7 +44,7 @@ export const processTrackRequest = async ({ spotifyTrackId, requestedByUserId })
     }
 
     // Check if track being requested is already in the queue
-    const inQueueCheck = QueueModel.checkForTrack({ spotifyTrackId });
+    const inQueueCheck = await QueueModel.checkForTrack({ spotifyTrackId });
 
     // If track is already in queue, then send a notification
     if (inQueueCheck) {
@@ -56,10 +56,13 @@ export const processTrackRequest = async ({ spotifyTrackId, requestedByUserId })
     }
 
     // Store the track's metadata for easier system access
-    TrackService.storeTrack({ trackMetadata });
+    await TrackService.storeTrack({ trackMetadata });
 
     // Send successfully requested track to queue
-    QueueService.storeSuccessfulRequest({ spotifyTrackId, requestedByUserId });
+    await QueueService.storeSuccessfulRequest({ spotifyTrackId, requestedByUserId });
+
+    // Update user's last request time
+    await UserModel.updateLastRequestTime({ userId: requestedByUserId });
 
     // Notify user of successful request
     await notifyUser({
@@ -69,15 +72,85 @@ export const processTrackRequest = async ({ spotifyTrackId, requestedByUserId })
     return { added: true };
 };
 
-// Checks the track against the rules and returns object with bool for passing and rule broken
-const evaluateTrackAgainstRules = async ({ trackMetadata, rules }) => {
+// Checks the track against the rules and returns object with bool for passing and description of rule broken
+const evaluateTrackAgainstRules = ({ trackMetadata, rules }) => {
+    if (!trackMetadata) {
+        return { passed: false, ruleBroken: { description: "Track metadata missing" } };
+    }
 
+    // Convert array of row objects into dictionary for fast lookup
+    const rulesByName = Object.fromEntries(
+        rules.map(rule => [rule.name, rule])
+    );
+
+    // === 1. Explicit Track Disallowed ===
+    if (rulesByName.explicitDisallowed?.value?.disallowed) {
+        if (trackMetadata.isExplicit) {
+            return {
+                passed: false,
+                ruleBroken: rulesByName.explicitDisallowed
+            };
+        }
+    }
+
+    // === 2. Max Length Rule ===
+    const maxLengthRule = rulesByName.maxLengthMs;
+    if (maxLengthRule?.value?.max_duration_ms !== undefined) {
+        const maxMs = maxLengthRule.value.max_duration_ms;
+
+        if (trackMetadata.duration > maxMs) {
+            return {
+                passed: false,
+                ruleBroken: maxLengthRule
+            };
+        }
+    }
+
+    // Passed all rules
+    return { passed: true };
 };
 
 // Checks current time against last request timestamp and cooldown rule, returns object with bool for allowed and wait time in ms
-const checkUserRequestCooldown = async ({ userLastRequestTimestamp, rules }) => {
+const checkUserRequestCooldown = ({ userLastRequestTimestamp, rules }) => {
+    // Convert array → lookup object
+    const rulesByName = Object.fromEntries(
+        rules.map(rule => [rule.name, rule])
+    );
 
+    const cooldownRule = rulesByName.requestCooldown;
+    if (!cooldownRule) {
+        // No cooldown rule → always allow
+        return { allowed: true, waitTimeInMs: 0 };
+    }
+
+    const cooldownMinutes = cooldownRule.value?.request_cooldown_minutes;
+    if (cooldownMinutes === undefined) {
+        // Bad rule → allow
+        return { allowed: true, waitTimeInMs: 0 };
+    }
+
+    // If user has never requested anything, allow
+    if (!userLastRequestTimestamp || !userLastRequestTimestamp.last_request_time) {
+        return { allowed: true, waitTimeInMs: 0 };
+    }
+
+    const lastReq = new Date(userLastRequestTimestamp.last_request_time);
+    const now = new Date();
+
+    const cooldownMs = cooldownMinutes * 60 * 1000;
+    const elapsed = now - lastReq;
+    const remaining = cooldownMs - elapsed;
+
+    if (remaining > 0) {
+        return {
+            allowed: false,
+            waitTimeInMs: remaining
+        };
+    }
+
+    return { allowed: true, waitTimeInMs: 0 };
 };
+
 
 // DRY helper function to create and send notification
 const notifyUser = async ({ type, details, userId }) => {
@@ -101,7 +174,7 @@ const notifyUser = async ({ type, details, userId }) => {
  * Produces human-readable messages for request success or failure,
  * including cooldown formatting when applicable.
  */
-const createNotificationMessage = async ({ type, details }) => {
+const createNotificationMessage = ({ type, details }) => {
     switch (type) {
         case 'ruleFailure':
             return `Request denied: ${details}.`;

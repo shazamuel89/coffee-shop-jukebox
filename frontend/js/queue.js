@@ -1,10 +1,8 @@
 /* Todo:
-- Uncomment line in buildBaseQueueItem() to account for multiple artists when backend is connected
 - Get the accurate currentUserId instead of using a placeholder
 - Make vote counts match to color of vote button
 - Need 4 vote button styles: unpressed, unpressed hover, pressed, pressed hover
 - Need pressed to be more different from unpressed
-- Need to uncomment queueItem.upvotes when backend is connected
 - Make it so that only track metadata is shown on each queue item initially, then when the item is clicked,
   either the item is pushed up or the items below it are pushed down, and then the vote buttons are displayed.
   I'm not sure if it would be better to have the vote numbers here or not too. If the track was requested by the current user,
@@ -23,7 +21,7 @@ const queueUrl = 'https://coffee-shop-jukebox.onrender.com/api/queue';
 const voteUrl = 'https://coffee-shop-jukebox.onrender.com/api/vote';
 
 // Temporary placeholder id of the user currently loading the queue or sending the vote
-currentUserId = 0;
+currentUserId = 1;
 
 // Will contain the list of queue items
 const queueContainer = document.getElementById('queue-container');
@@ -82,7 +80,7 @@ function buildBaseQueueItem(queueItem) {
     queueCard.className = 'list-group-item d-flex justify-content-between align-items-center';
     queueCard.innerHTML = `
         <div>
-            <img src="${placeholderImage}" class="me-2" style="width:40px;height:40px;object-fit:cover;" />
+            <img src="${queueItem.coverArtUrl}" class="me-2" style="width:40px;height:40px;object-fit:cover;" />
             <strong>${queueItem.title || 'Unknown Title'}</strong>
             <!-- If multiple artists, then join by ', ' -->
             <div class="text-muted small">
