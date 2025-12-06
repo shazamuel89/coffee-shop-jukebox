@@ -18,7 +18,8 @@ const fetchLastRequestTime = async ({ userId }) => {
     const parameters = [userId];
     try {
 	    const { rows } = await pool.query(query, parameters);
-	    return rows[0] || null;
+        const row = rows[0];
+        return row ? camelcaseKeys(row) : null;
     } catch(err) {
 	    console.error("Error in UserModel.fetchLastRequestTime:", err);
 	    throw err;

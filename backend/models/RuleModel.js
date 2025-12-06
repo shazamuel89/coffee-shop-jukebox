@@ -14,7 +14,7 @@ export const fetchRules = async () => {
     `;
     try {
 	    const { rows } = await pool.query(query);
-	    return rows;
+		return rows ? camelcaseKeys(rows) : null;
     } catch (err) {
 	    console.error("Error in RuleModel.fetchRules:", err);
 	    throw err;

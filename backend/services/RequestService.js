@@ -14,6 +14,8 @@ export const processTrackRequest = async ({ spotifyTrackId, requestedByUserId })
     // Get all current rules
     const rules = await RuleModel.fetchRules();
 
+    console.log("RULES FROM DB:", rules);
+
     // Check if track meets the rules
     const ruleCheck = evaluateTrackAgainstRules({ trackMetadata, rules });
 
