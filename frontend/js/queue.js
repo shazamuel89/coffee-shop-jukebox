@@ -33,7 +33,9 @@ async function loadQueue() {
     try {
         const response = await fetch(`${queueUrl}?userId=${currentUserId}`);    // Send a GET request to /api/queue endpoint with the current user id
         if (!response.ok) {                                                     // If response has an HTTP status code not in 200 range, then throw error
-            throw new Error('Failed to fetch queue');
+            const errorData = await response.json();
+            console.error("Backend error:", errorData);
+            throw new Error(errorData.error || "Unknown error");
         }
 
         const data = await response.json();                                     // Convert response to json
@@ -51,7 +53,7 @@ async function loadQueue() {
         queueItems.forEach(queueItem => renderQueueItem(queueItem));            // Render each queue item
         return true;
     } catch (err) {
-        console.error(err);
+        console.error("Failed to load queue:", err);
         emptyMessage.textContent = "Error loading queue.";                      // Set the 'empty' message to display error feedback
         emptyMessage.classList.remove('d-none');                                // Display the message
         return false;

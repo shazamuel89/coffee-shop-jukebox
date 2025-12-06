@@ -27,6 +27,6 @@ export function errorHandler(err, _req, res, _next) {
 
   res.status(status).json({
     error: message,
-    ...(isProd ? {} : { stack: err.stack }), // stack only in dev
+    ...(isProduction ? {} : { stack: err.stack }), // stack only in dev
   });
 }

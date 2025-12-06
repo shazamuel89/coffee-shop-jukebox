@@ -125,10 +125,13 @@ confirmRequestBtn.addEventListener('click', async () => {
             }),
         });
         if (!response.ok) {
-            throw new Error("Request failed");
+            const errorData = await response.json();
+            console.error("Backend error:", errorData);
+            throw new Error(errorData.error || `HTTP ${response.status}`);
         }
         toast("Song requested!");
     } catch (err) {
+        console.error("Request failed:", err);
         toast("Error: could not request");
     }
     closeModal();
