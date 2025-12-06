@@ -22,6 +22,7 @@ import validateRequestBody from '../utils/validateRequestBodyOrQuery.js';
  * @param {object} res - Express response object
  */
 export const requestTrack = async (req, res) => {
+    console.log("BODY RECEIVED:", req.body);
     validateRequestBody(req.body, {
         spotifyTrackId:     { type: 'string', required: true },
         requestedByUserId:  { type: 'number', required: true },

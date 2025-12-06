@@ -23,8 +23,8 @@ VALUES
 -- We'll insert 20 sample tracks. spotify_track_id must be unique.
 --INSERT INTO Tracks (spotify_track_id, title, artists, release_name, release_id, cover_art_url, genres, is_explicit, duration_ms, last_fetched)
 --VALUES
-  ('track_001', 'Morning Pour', '[{"name":"The Baristas"}]'::jsonb, 'Brewed Moods', 'rel_001', 'https://pics.example/cover1.jpg', '["indie","folk"]'::jsonb, FALSE, 210000, NOW() - INTERVAL '3 days'),
-  ('track_002', 'Espresso Logic', '[{"name":"Caffeine Code"}]'::jsonb, 'Coffee Shop Beats', 'rel_002', 'https://pics.example/cover2.jpg', '["electronic","ambient"]'::jsonb, FALSE, 180000, NOW() - INTERVAL '5 days'),
+--  ('track_001', 'Morning Pour', '[{"name":"The Baristas"}]'::jsonb, 'Brewed Moods', 'rel_001', 'https://pics.example/cover1.jpg', '["indie","folk"]'::jsonb, FALSE, 210000, NOW() - INTERVAL '3 days'),
+--  ('track_002', 'Espresso Logic', '[{"name":"Caffeine Code"}]'::jsonb, 'Coffee Shop Beats', 'rel_002', 'https://pics.example/cover2.jpg', '["electronic","ambient"]'::jsonb, FALSE, 180000, NOW() - INTERVAL '5 days');
 --  ('track_003', 'Sugar & Foam', '[{"name":"Latte Lovers"}]'::jsonb, 'Foam', 'rel_003', 'https://pics.example/cover3.jpg', '["pop","soul"]'::jsonb, FALSE, 200000, NOW() - INTERVAL '2 days'),
 --  ('track_004', 'Quiet Corner', '[{"name":"Acoustic Few"}]'::jsonb, 'Corners', 'rel_004', 'https://pics.example/cover4.jpg', '["folk","indie"]'::jsonb, FALSE, 240000, NOW() - INTERVAL '10 days'),
 --  ('track_005', 'Late Shift', '[{"name":"Night Baristas"}]'::jsonb, 'After Hours', 'rel_005', 'https://pics.example/cover5.jpg', '["jazz","ambient"]'::jsonb, FALSE, 300000, NOW() - INTERVAL '1 day');
