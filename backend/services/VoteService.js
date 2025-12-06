@@ -64,11 +64,10 @@ export const getUserVotesForQueueItems = async (userId, queueItemIds) => {
     const rows = await fetchUserVotesForQueueItems(userId, queueItemIds);
 
     // Create dictionary with queue item id as the key and vote type as the value
-    return rows.map(row => ({
-    queueItemId: row.queueItemId,
-    isUpvote: row.isUpvote,
-}));
-
+    return (rows || []).map(row => ({
+        queueItemId: row.queueItemId,
+        isUpvote: row.isUpvote,
+    }));
 }
 
 const determineSkipStatus = (upvotes, downvotes, voteThreshold, minimumVotes) => {

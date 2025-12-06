@@ -74,7 +74,7 @@ const fetchUserVotesForQueueItems = async (userId, queueItemIds) => {
     const parameters = [userId, queueItemIds];
     try {
         const { rows } = await pool.query(query, parameters);
-        return rows ? camelcaseKeys(rows) : null;
+        return camelcaseKeys(rows || []);
     } catch(err) {
         console.error("Error in VoteModel.fetchUserVotesForQueueItems:", err);
         throw err;
