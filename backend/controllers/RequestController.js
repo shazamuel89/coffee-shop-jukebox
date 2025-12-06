@@ -1,7 +1,7 @@
 // backend/controllers/RequestController.js
 
 import * as RequestService from '../services/RequestService.js';
-import validateRequestBody from '../utils/validateRequestBodyOrQuery.js';
+import validateRequestBodyOrQuery from '../utils/validateRequestBodyOrQuery.js';
 
 
 /**
@@ -23,9 +23,12 @@ import validateRequestBody from '../utils/validateRequestBodyOrQuery.js';
  */
 export const requestTrack = async (req, res) => {
     console.log("BODY RECEIVED:", req.body);
-    validateRequestBody(req.body, {
-        spotifyTrackId:     { type: 'string', required: true },
-        requestedByUserId:  { type: 'number', required: true },
+    validateRequestBodyOrQuery({
+        data: req.body,
+        schema: {
+            spotifyTrackId:     { type: 'string', required: true },
+            requestedByUserId:  { type: 'number', required: true },
+        }
     });
 
     // All parameters present and types confirmed, so extract them
