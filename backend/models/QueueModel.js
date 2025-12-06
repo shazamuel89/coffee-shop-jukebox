@@ -54,16 +54,17 @@ export const appendQueueItem = async ({ spotifyTrackId, requestedBy = null, isRe
   try {
     await client.query('BEGIN');
 
-    // Lock the table so nobody else can change positions while we read MAX()
-    const { rows: maxRows } = await client.query(`
-      SELECT
-        COALESCE(MAX(position), 0) AS maxPosition
-      FROM
-        Queue
+    // Lock the last row by position - avoids aggregates entirely
+    const { rows: lastRows } = await client.query(`
+      SELECT position
+      FROM Queue
+      ORDER BY position DESC
+      LIMIT 1
       FOR UPDATE;
     `);
 
-    const nextPosition = maxRows[0].maxPosition + 1;
+    const lastPos = lastRows.length > 0 ? lastRows[0].position : 0;
+    const nextPosition = lastPos + 1;
 
     const insertQuery = `
       INSERT INTO
@@ -74,10 +75,13 @@ export const appendQueueItem = async ({ spotifyTrackId, requestedBy = null, isRe
 
     const parameters = [spotifyTrackId, requestedBy, isRequest, nextPosition];
     const { rows } = await client.query(insertQuery, parameters);
+
     await client.query('COMMIT');
+
     const row = rows[0];
     return row ? camelcaseKeys(row) : null;
-  } catch(err) {
+
+  } catch (err) {
     await client.query('ROLLBACK');
     throw err;
   } finally {
