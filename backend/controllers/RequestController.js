@@ -1,7 +1,7 @@
 // backend/controllers/RequestController.js
 
 import * as RequestService from '../services/RequestService.js';
-import validateRequestBody from '../utils/validateRequestBody.js';
+import validateRequestBody from '../utils/validateRequestBodyOrQuery.js';
 
 
 /**
