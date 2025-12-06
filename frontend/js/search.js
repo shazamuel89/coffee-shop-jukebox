@@ -16,9 +16,9 @@ const confirmRequestBtn = document.getElementById('confirmRequestBtn');
 
 // Presents a brief toast notification to the user - displays message briefly and then hides it
 function toast(message) {
-    toastElement.textContent = message;
-    toastElement.style.display = 'block';
-    setTimeout(() => (toastElement.style.display = 'none'), 1500);
+    //toastElement.textContent = message;
+    //toastElement.style.display = 'block';
+    //setTimeout(() => (toastElement.style.display = 'none'), 1500);
 }
 
 // Build search URL
