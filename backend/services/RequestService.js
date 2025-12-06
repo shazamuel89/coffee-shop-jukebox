@@ -4,6 +4,8 @@ import * as SpotifyAPIAdapter from '../adapters/SpotifyAPIAdapter.js';
 import * as RuleModel from '../models/RuleModel.js';
 import * as UserModel from '../models/UserModel.js';
 import * as TrackService from '../services/TrackService.js';
+import * as QueueService from '../services/QueueService.js';
+import * as QueueModel from '../models/QueueModel.js';
 
 
 // Main function that handles requests and calls helper functions, returns bool for if request was accepted

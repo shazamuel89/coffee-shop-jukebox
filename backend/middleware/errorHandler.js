@@ -10,12 +10,14 @@ export function notFound(req, _res, next) {
 
 // Centralized error handler
 export function errorHandler(err, _req, res, _next) {
+  console.error("BACKEND ERROR:", err);
   // Default behavior if someone throws a plain Error
   const status = err.status || 500;
   const message = err.message || "Server error";
 
-  const isProduction = process.env.NODE_ENV === "production";
-
+  //const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = false;
+  
   // In development, give full stack traces
   if (!isProduction) {
     console.error("ERROR:", {
