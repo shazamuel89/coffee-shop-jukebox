@@ -78,7 +78,7 @@ npm install
 
 ```
 
-### Step 3 - Configure Environment Variables
+## Environment Variables
 
 Create a file:
 ```
