@@ -93,13 +93,16 @@ SPOTIFY_CLIENT_ID=your_client_id
 SPOTIFY_CLIENT_SECRET=your_client_secret
 ```
 
-To get the required .env variables, you must create
+To get the required .env variables, you must create:
+
 - Your own PostgreSQL database
+
 You can create a free PostgreSQL database at:
 ```
 https://render.com
 ```
 - Your own Spotify Developer App
+
 You can create a Spotify Developer App at:
 ```
 https://developer.spotify.com
@@ -152,7 +155,8 @@ http://127.0.0.1:5173
 
 ### Option 2 - VSCode Live Server
 
-Install VSCode, and install the VSCode Live Server extension.\
+Install VSCode, and install the VSCode Live Server extension.
+
 Open the project file:
 ```
 frontend/index.html
