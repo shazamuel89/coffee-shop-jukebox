@@ -1,0 +1,1 @@
+The js directory contains JavaScript files that add interactivity to the pages.

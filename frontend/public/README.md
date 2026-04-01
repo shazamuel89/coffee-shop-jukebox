@@ -1,0 +1,1 @@
+The public directory contains static assets (images, icons, audio samples, fonts).

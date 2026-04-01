@@ -1,0 +1,1 @@
+The services directory contains business logic, potentially including validation logic. It helps keep the controllers thin.

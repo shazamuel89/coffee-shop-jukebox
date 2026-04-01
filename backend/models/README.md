@@ -1,0 +1,1 @@
+The models directory contains code that directly accesses and modifies the database according to the needs of the API.

@@ -1,0 +1,1 @@
+The controllers directory contains files that define what happens when a specific API endpoint is requested.

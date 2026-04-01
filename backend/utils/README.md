@@ -1,0 +1,1 @@
+The utils directory contains helper functions and constants used across the backend.

@@ -1,0 +1,1 @@
+The integration_tests directory contains the tests which concern complete processes of the software.

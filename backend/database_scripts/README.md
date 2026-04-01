@@ -1,0 +1,1 @@
+The database_scripts directory contains useful scripts that may need to be run on the database for development and initialization purposes.

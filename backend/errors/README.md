@@ -1,0 +1,1 @@
+The errors directory contains files that define the various errors that may occur during the execution.
