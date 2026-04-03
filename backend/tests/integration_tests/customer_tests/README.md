@@ -1,0 +1,1 @@
+The customer_tests directory contains all the integration tests that test the functionality of the customer-initiated process flows.

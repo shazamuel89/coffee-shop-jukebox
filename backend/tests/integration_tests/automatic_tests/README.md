@@ -1,0 +1,1 @@
+The automatic_tests directory contains all the integration tests that test the functionality of the automatically-initiated process flows.

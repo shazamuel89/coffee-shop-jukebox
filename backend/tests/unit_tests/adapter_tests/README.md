@@ -1,0 +1,1 @@
+The adapter_tests directory contains all the unit tests that test the functions contained in the adapter modules.

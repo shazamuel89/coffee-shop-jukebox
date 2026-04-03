@@ -1,0 +1,1 @@
+The model_tests directory contains all the unit tests that test the functions contained in the model modules.

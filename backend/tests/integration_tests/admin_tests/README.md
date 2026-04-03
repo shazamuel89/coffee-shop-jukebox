@@ -1,0 +1,1 @@
+The admin_tests directory contains all the integration tests that test the functionality of admin-initiated process flows.

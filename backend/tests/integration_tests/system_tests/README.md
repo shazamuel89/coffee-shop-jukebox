@@ -1,0 +1,1 @@
+The system_tests directory contains all the integration tests that test the basic functionality of the backend system.
