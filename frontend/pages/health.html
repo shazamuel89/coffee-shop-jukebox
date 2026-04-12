@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Health</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* clean default font */
+            background: #0f172a; /* dark background */
+            color: #e2e8f0; /* light text */
+            display: flex; /* center layout */
+            justify-content: center; /* horizontal center */
+            align-items: center; /* vertical center */
+            height: 100vh; /* full screen height */
+            margin: 0; /* remove default margin */
+        }
+
+        .card {
+            background: #1e293b; /* slightly lighter panel */
+            padding: 20px; /* spacing inside card */
+            border-radius: 12px; /* rounded corners */
+            width: 320px; /* fixed width */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); /* soft shadow */
+        }
+
+        .status {
+            font-weight: bold; /* emphasize status */
+            margin-bottom: 10px; /* spacing */
+        }
+
+        .up {
+            color: #22c55e; /* green */
+        }
+
+        .down {
+            color: #ef4444; /* red */
+        }
+
+        button {
+            margin-top: 10px; /* spacing above button */
+            width: 100%; /* full width */
+            padding: 10px; /* clickable area */
+            border: none; /* remove border */
+            border-radius: 8px; /* rounded */
+            cursor: pointer; /* pointer cursor */
+            background: #3b82f6; /* blue */
+            color: white; /* text color */
+        }
+
+        button:hover {
+            background: #2563eb; /* darker blue on hover */
+        }
+
+        pre {
+            background: #0b1220; /* darker block */
+            padding: 10px; /* spacing */
+            border-radius: 8px; /* rounded */
+            overflow-x: auto; /* scroll if needed */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main container -->
+    <div class="card">
+        <h2>Backend Health Check</h2>
+
+        <!-- Status display -->
+        <div id="status" class="status">Checking...</div>
+
+        <!-- Data output -->
+        <pre id="output">Waiting for response...</pre>
+
+        <!-- Refresh button -->
+        <button id="refresh">Refresh</button>
+    </div>
+
+    <script src="../js/health.js"></script>
+</body>
+</html>
